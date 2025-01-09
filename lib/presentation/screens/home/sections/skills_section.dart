@@ -35,7 +35,7 @@ class SkillsSection extends ConsumerWidget {
               _buildSkillCard(
                 context,
                 'Flutter Development',
-                ['Flutter/Dart', 'Riverpod', 'Cubit', 'REST API'],
+                ['Flutter/Dart', 'Riverpod', 'Cubit'],
               ),
               _buildSkillCard(
                 context,
@@ -52,7 +52,7 @@ class SkillsSection extends ConsumerWidget {
               _buildSkillCard(
                 context,
                 'Backend Services',
-                ['Firebase', 'Supabase', 'REST API'],
+                ['Firebase', 'Supabase', 'Spring'],
               ),
               _buildSkillCard(
                 context,
