@@ -29,12 +29,12 @@ class HomeScreen extends ConsumerWidget {
             },
             child: const CustomScrollView(
               slivers: [
-                SliverToBoxAdapter(child: HeroSection()),
-                SliverToBoxAdapter(child: ProfileSection()),
-                SliverToBoxAdapter(child: ExperienceSection()),
-                SliverToBoxAdapter(child: ProjectsSection()),
-                SliverToBoxAdapter(child: SkillsSection()),
-                SliverToBoxAdapter(child: ContactSection()),
+                SliverToBoxAdapter(child: HeroSection()), // 인삿말
+                SliverToBoxAdapter(child: ProfileSection()), // 프로필
+                SliverToBoxAdapter(child: SkillsSection()), // 스킬
+                SliverToBoxAdapter(child: ProjectsSection()), // 프로젝트
+                SliverToBoxAdapter(child: ExperienceSection()), // 활동 경험
+                SliverToBoxAdapter(child: ContactSection()), // 연락
               ],
             ),
           ),
