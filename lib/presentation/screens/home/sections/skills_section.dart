@@ -34,18 +34,56 @@ class SkillsSection extends ConsumerWidget {
             children: [
               _buildSkillCard(
                 context,
-                'Frontend',
-                ['Flutter', 'React', 'Next.js', 'TypeScript', 'Tailwind CSS'],
+                'Flutter Development',
+                [
+                  'Flutter/Dart',
+                  'Riverpod',
+                  'Cubit',
+                  'REST API',
+                ],
               ),
               _buildSkillCard(
                 context,
-                'Backend',
-                ['Node.js', 'Express', 'NestJS', 'Python', 'Django'],
+                'iOS Development',
+                [
+                  'Swift',
+                  'UIKit',
+                  'SwiftUI',
+                  'AutoLayout',
+                  'Combine',
+                  'RxSwift',
+                ],
               ),
               _buildSkillCard(
                 context,
-                'Database & DevOps',
-                ['PostgreSQL', 'MongoDB', 'Docker', 'AWS', 'Firebase'],
+                'Backend Services',
+                [
+                  'Firebase',
+                  'Supabase',
+                  'REST API',
+                ],
+              ),
+              _buildSkillCard(
+                context,
+                'Development Tools',
+                [
+                  'Git/GitHub',
+                  'Figma',
+                  'Slack',
+                ],
+              ),
+              _buildSkillCard(
+                context,
+                'Architecture & Design Patterns',
+                [
+                  'MVC',
+                  'MVVM',
+                  'Clean Architecture',
+                  'Repository Pattern',
+                  'Singleton Pattern',
+                  'Observer Pattern',
+                  'Dependency Injection',
+                ],
               ),
             ],
           ),
