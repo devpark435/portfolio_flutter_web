@@ -18,25 +18,40 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       body: Stack(
         children: [
-          NotificationListener<ScrollNotification>(
-            onNotification: (notification) {
-              if (notification is ScrollUpdateNotification) {
-                ref.read(scrollProvider.notifier).updateScroll(
-                    notification.metrics.pixels /
-                        notification.metrics.maxScrollExtent);
-              }
-              return true;
-            },
-            child: const CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(child: HeroSection()), // 인삿말
-                SliverToBoxAdapter(child: ProfileSection()), // 프로필
-                SliverToBoxAdapter(child: SkillsSection()), // 스킬
-                SliverToBoxAdapter(child: ProjectsSection()), // 프로젝트
-                SliverToBoxAdapter(child: ExperienceSection()), // 활동 경험
-                SliverToBoxAdapter(child: ContactSection()), // 연락
-              ],
-            ),
+          CustomScrollView(
+            slivers: [
+              const SliverToBoxAdapter(child: HeroSection()),
+              SliverToBoxAdapter(
+                child: Container(
+                  color: Theme.of(context).colorScheme.surface,
+                  child: const ProfileSection(),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  color: Theme.of(context).colorScheme.surface.withAlpha(50),
+                  child: const ExperienceSection(),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  color: Theme.of(context).colorScheme.surface,
+                  child: const ProjectsSection(),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  color: Theme.of(context).colorScheme.surface.withAlpha(50),
+                  child: const SkillsSection(),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  color: Theme.of(context).colorScheme.surface,
+                  child: const ContactSection(),
+                ),
+              ),
+            ],
           ),
           if (scrollProgress > 0)
             Positioned(
