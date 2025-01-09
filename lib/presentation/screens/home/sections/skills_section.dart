@@ -95,7 +95,7 @@ class SkillsSection extends ConsumerWidget {
       }
     }
 
-    final backgroundColor = Theme.of(context).cardColor ?? Colors.white;
+    final backgroundColor = Theme.of(context).cardColor;
     final textColor =
         Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
     final primaryColor = Theme.of(context).primaryColor;
