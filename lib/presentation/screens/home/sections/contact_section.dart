@@ -6,8 +6,13 @@ class ContactSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 32),
+      padding: EdgeInsets.symmetric(
+        vertical: 64,
+        horizontal: width > 800 ? 32 : 16,
+      ),
       child: Column(
         children: [
           Text(
@@ -21,8 +26,10 @@ class ContactSection extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 48),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            alignment: WrapAlignment.center,
             children: [
               _buildContactButton(
                 context,
@@ -30,14 +37,12 @@ class ContactSection extends StatelessWidget {
                 Icons.code,
                 'https://github.com/devpark435',
               ),
-              const SizedBox(width: 16),
               _buildContactButton(
                 context,
                 'LinkedIn',
                 Icons.business_center,
                 'https://linkedin.com/in/yourusername',
               ),
-              const SizedBox(width: 16),
               _buildContactButton(
                 context,
                 'Email',
