@@ -28,6 +28,7 @@ class SkillsSection extends ConsumerWidget {
             crossAxisCount: crossAxisCount,
             crossAxisSpacing: 24,
             mainAxisSpacing: 24,
+            childAspectRatio: width > 800 ? 1.2 : 1.0,
             physics: const NeverScrollableScrollPhysics(),
             children: [
               _buildSkillCard(
