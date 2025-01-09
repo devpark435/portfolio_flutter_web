@@ -35,12 +35,7 @@ class SkillsSection extends ConsumerWidget {
               _buildSkillCard(
                 context,
                 'Flutter Development',
-                [
-                  'Flutter/Dart',
-                  'Riverpod',
-                  'Cubit',
-                  'REST API',
-                ],
+                ['Flutter/Dart', 'Riverpod', 'Cubit', 'REST API'],
               ),
               _buildSkillCard(
                 context,
@@ -51,26 +46,18 @@ class SkillsSection extends ConsumerWidget {
                   'SwiftUI',
                   'AutoLayout',
                   'Combine',
-                  'RxSwift',
+                  'RxSwift'
                 ],
               ),
               _buildSkillCard(
                 context,
                 'Backend Services',
-                [
-                  'Firebase',
-                  'Supabase',
-                  'REST API',
-                ],
+                ['Firebase', 'Supabase', 'REST API'],
               ),
               _buildSkillCard(
                 context,
                 'Development Tools',
-                [
-                  'Git/GitHub',
-                  'Figma',
-                  'Slack',
-                ],
+                ['Git/GitHub', 'Figma', 'Slack'],
               ),
               _buildSkillCard(
                 context,
@@ -81,8 +68,7 @@ class SkillsSection extends ConsumerWidget {
                   'Clean Architecture',
                   'Repository Pattern',
                   'Singleton Pattern',
-                  'Observer Pattern',
-                  'Dependency Injection',
+                  'Observer Pattern'
                 ],
               ),
             ],
@@ -94,17 +80,45 @@ class SkillsSection extends ConsumerWidget {
 
   Widget _buildSkillCard(
       BuildContext context, String title, List<String> skills) {
+    // 각 섹션별 아이콘 매핑
+    IconData getTitleIcon() {
+      switch (title) {
+        case 'Flutter Development':
+          return Icons.flutter_dash;
+        case 'iOS Development':
+          return Icons.phone_iphone;
+        case 'Backend Services':
+          return Icons.cloud;
+        case 'Development Tools':
+          return Icons.code;
+        case 'Architecture & Design Patterns':
+          return Icons.architecture;
+        default:
+          return Icons.code;
+      }
+    }
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Theme.of(context).primaryColor,
-                  ),
+            Row(
+              children: [
+                Icon(
+                  getTitleIcon(),
+                  color: Theme.of(context).primaryColor,
+                  size: 24,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: Theme.of(context).primaryColor,
+                      ),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             ...skills.map((skill) => Padding(
