@@ -95,45 +95,59 @@ class SkillsSection extends ConsumerWidget {
       }
     }
 
+    final backgroundColor = Theme.of(context).cardColor ?? Colors.white;
+    final textColor =
+        Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+    final primaryColor = Theme.of(context).primaryColor;
+
     return Card(
       elevation: 4,
-      color: Theme.of(context).cardColor,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: 8,
-              children: [
-                Icon(
-                  getTitleIcon(),
-                  color: Theme.of(context).primaryColor,
-                  size: 24,
-                ),
-                Flexible(
-                  child: Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold,
-                        ),
+      color: backgroundColor,
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 100),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                children: [
+                  Icon(
+                    getTitleIcon(),
+                    color: primaryColor,
+                    size: 24,
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ...skills.map((skill) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    skill,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                        ),
+                  Flexible(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        color: primaryColor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                )),
-          ],
+                ],
+              ),
+              const SizedBox(height: 16),
+              ...skills.map((skill) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      skill,
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize: 16,
+                      ),
+                    ),
+                  )),
+            ],
+          ),
         ),
       ),
     );
