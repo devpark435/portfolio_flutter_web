@@ -6,8 +6,18 @@ class SkillsSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final width = MediaQuery.of(context).size.width;
+    final crossAxisCount = width > 1200
+        ? 3
+        : width > 800
+            ? 2
+            : 1;
+
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 32),
+      padding: EdgeInsets.symmetric(
+        vertical: 64,
+        horizontal: width > 800 ? 32 : 16,
+      ),
       child: Column(
         children: [
           Text(
@@ -17,7 +27,7 @@ class SkillsSection extends ConsumerWidget {
           const SizedBox(height: 48),
           GridView.count(
             shrinkWrap: true,
-            crossAxisCount: 3,
+            crossAxisCount: crossAxisCount,
             crossAxisSpacing: 24,
             mainAxisSpacing: 24,
             physics: const NeverScrollableScrollPhysics(),
