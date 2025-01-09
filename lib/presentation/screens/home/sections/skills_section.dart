@@ -80,7 +80,6 @@ class SkillsSection extends ConsumerWidget {
 
   Widget _buildSkillCard(
       BuildContext context, String title, List<String> skills) {
-    // 각 섹션별 아이콘 매핑
     IconData getTitleIcon() {
       switch (title) {
         case 'Flutter Development':
@@ -104,19 +103,22 @@ class SkillsSection extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 8,
               children: [
                 Icon(
                   getTitleIcon(),
                   color: Theme.of(context).primaryColor,
                   size: 24,
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: Theme.of(context).primaryColor,
-                      ),
+                Flexible(
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                  ),
                 ),
               ],
             ),
