@@ -13,8 +13,8 @@ class HeroSection extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Theme.of(context).primaryColor.withOpacity(0.1),
-            Theme.of(context).primaryColor.withOpacity(0.2),
+            Theme.of(context).primaryColor.withAlpha(25),
+            Theme.of(context).primaryColor.withAlpha(50),
           ],
         ),
       ),
