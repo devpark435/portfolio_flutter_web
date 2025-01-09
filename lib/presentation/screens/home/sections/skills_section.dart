@@ -96,6 +96,8 @@ class SkillsSection extends ConsumerWidget {
     }
 
     return Card(
+      elevation: 4,
+      color: Theme.of(context).cardColor,
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -115,6 +117,7 @@ class SkillsSection extends ConsumerWidget {
                     title,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold,
                         ),
                   ),
                 ),
@@ -125,7 +128,9 @@ class SkillsSection extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
                     skill,
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        ),
                   ),
                 )),
           ],
