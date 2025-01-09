@@ -13,17 +13,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.27.1'
           channel: 'stable'
       
-      - name: Enable Web
-        run: flutter config --enable-web
-        
-      - name: Get dependencies
+      - name: Install dependencies
         run: flutter pub get
-        
+      
       - name: Build
         run: flutter build web --base-href "/portfolio_flutter_web/"
       
@@ -33,3 +32,8 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web
           force_orphan: true
+          
+      - name: Verify build
+        run: |
+          echo "Listing contents of build/web directory:"
+          ls -la build/web
