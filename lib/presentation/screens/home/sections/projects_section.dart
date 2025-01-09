@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_web/config/providers/providers.dart';
 import 'package:portfolio_web/presentation/widgets/project_card.dart';
+import 'package:portfolio_web/presentation/widgets/section_title.dart';
 
 class ProjectsSection extends ConsumerWidget {
   const ProjectsSection({super.key});
@@ -24,10 +25,7 @@ class ProjectsSection extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          Text(
-            '프로젝트',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
+          const SectionTitle(title: '프로젝트'),
           const SizedBox(height: 48),
           projectsAsync.when(
             loading: () => const CircularProgressIndicator(),

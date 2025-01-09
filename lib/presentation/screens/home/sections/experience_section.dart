@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio_web/presentation/widgets/section_title.dart';
 
 class ExperienceSection extends StatelessWidget {
   const ExperienceSection({super.key});
@@ -14,10 +15,7 @@ class ExperienceSection extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(
-            '활동 경험',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
+          const SectionTitle(title: '활동 경험'),
           const SizedBox(height: 48),
           _buildExperienceTimeline(context),
         ],

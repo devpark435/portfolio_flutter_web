@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:portfolio_web/presentation/widgets/section_title.dart';
 
 class SkillsSection extends ConsumerWidget {
   const SkillsSection({super.key});
@@ -20,10 +21,7 @@ class SkillsSection extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          Text(
-            '기술 스택',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
+          const SectionTitle(title: "기술 스택"),
           const SizedBox(height: 48),
           GridView.count(
             shrinkWrap: true,

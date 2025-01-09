@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio_web/presentation/widgets/section_title.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactSection extends StatelessWidget {
@@ -15,10 +16,7 @@ class ContactSection extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(
-            '연락하기',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
+          const SectionTitle(title: '연락하기'),
           const SizedBox(height: 24),
           Text(
             '새로운 기회를 찾고 있습니다.\n언제든 연락주세요.',

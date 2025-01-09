@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio_web/presentation/widgets/section_title.dart';
 
 class ProfileSection extends StatelessWidget {
   const ProfileSection({super.key});
@@ -14,10 +15,7 @@ class ProfileSection extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(
-            '프로필',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
+          const SectionTitle(title: '프로필'),
           const SizedBox(height: 48),
           Card(
             child: Padding(
