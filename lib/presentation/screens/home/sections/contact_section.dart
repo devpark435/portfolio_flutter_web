@@ -28,7 +28,7 @@ class ContactSection extends StatelessWidget {
                 context,
                 'GitHub',
                 Icons.code,
-                'https://github.com/yourusername',
+                'https://github.com/devpark435',
               ),
               const SizedBox(width: 16),
               _buildContactButton(
