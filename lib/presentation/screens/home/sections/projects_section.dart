@@ -2,17 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_web/config/providers/providers.dart';
 import 'package:portfolio_web/presentation/widgets/project_card.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ProjectsSection extends ConsumerWidget {
   const ProjectsSection({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final width = MediaQuery.of(context).size.width;
+    final crossAxisCount = width > 1200
+        ? 3
+        : width > 800
+            ? 2
+            : 1;
+
     final projectsAsync = ref.watch(projectsProvider);
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 32),
+      padding: EdgeInsets.symmetric(
+        vertical: 64,
+        horizontal: width > 800 ? 32 : 16,
+      ),
       child: Column(
         children: [
           Text(
@@ -26,9 +35,9 @@ class ProjectsSection extends ConsumerWidget {
             data: (projects) => GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 3 / 2,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                childAspectRatio: width > 800 ? 3 / 2 : 3 / 3,
                 crossAxisSpacing: 24,
                 mainAxisSpacing: 24,
               ),
@@ -39,21 +48,6 @@ class ProjectsSection extends ConsumerWidget {
               },
             ),
           ),
-          if (projectsAsync is AsyncData) const SizedBox(height: 48),
-          if (projectsAsync is AsyncData)
-            OutlinedButton(
-              onPressed: () {
-                // GitHub 프로필로 이동
-                launchUrl(Uri.parse('https://github.com/devpark435'));
-              },
-              child: const Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 16,
-                ),
-                child: Text('더 많은 프로젝트 보기'),
-              ),
-            ),
         ],
       ),
     );
