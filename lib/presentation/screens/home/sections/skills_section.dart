@@ -101,34 +101,40 @@ class SkillsSection extends ConsumerWidget {
         Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
     final primaryColor = Theme.of(context).primaryColor;
 
-    return Card(
-      elevation: 4,
-      color: backgroundColor,
+    return Material(
+      color: Colors.transparent,
       child: Container(
-        constraints: const BoxConstraints(minHeight: 100),
         decoration: BoxDecoration(
-          color: backgroundColor,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 8,
+              Row(
                 children: [
                   Icon(
                     getTitleIcon(),
-                    color: primaryColor,
+                    color: Colors.blue,
                     size: 24,
                   ),
-                  Flexible(
+                  const SizedBox(width: 8),
+                  Expanded(
                     child: Text(
                       title,
-                      style: TextStyle(
-                        color: primaryColor,
+                      style: const TextStyle(
+                        color: Colors.black,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -141,8 +147,8 @@ class SkillsSection extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
                       skill,
-                      style: TextStyle(
-                        color: textColor,
+                      style: const TextStyle(
+                        color: Colors.black,
                         fontSize: 16,
                       ),
                     ),
