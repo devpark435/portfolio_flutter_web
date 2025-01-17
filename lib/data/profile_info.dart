@@ -22,6 +22,6 @@ const List<ProfileInfo> profileInfos = [
   ),
   ProfileInfo(
     label: '관심 분야',
-    values: ['Flutter, Web Development, AI'],
+    values: ['Flutter, iOS'],
   ),
 ];

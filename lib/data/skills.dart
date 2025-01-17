@@ -11,7 +11,7 @@ const List<Skill> skills = [
   ),
   Skill(
     title: 'Backend Services',
-    skills: ['Firebase', 'Supabase', 'Spring'],
+    skills: ['Firebase', 'Supabase', 'SpringBoot'],
   ),
   Skill(
     title: 'Development Tools',
