@@ -17,19 +17,16 @@ class ExperienceSection extends StatelessWidget {
         children: [
           const SectionTitle(title: '활동 경험'),
           const SizedBox(height: 48),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: experiences
-                  .map((experience) => Padding(
-                        padding: const EdgeInsets.only(bottom: 32),
-                        child: ExperienceCard(
-                          experience: experience,
-                          isMobile: isMobile,
-                        ),
-                      ))
-                  .toList(),
-            ),
+          Column(
+            children: experiences
+                .map((experience) => Padding(
+                      padding: const EdgeInsets.only(bottom: 32),
+                      child: ExperienceCard(
+                        experience: experience,
+                        isMobile: isMobile,
+                      ),
+                    ))
+                .toList(),
           ),
         ],
       ),
