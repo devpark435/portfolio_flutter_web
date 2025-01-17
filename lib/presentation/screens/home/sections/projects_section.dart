@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_web/config/providers/providers.dart';
 import 'package:portfolio_web/presentation/widgets/project_card.dart';
 import 'package:portfolio_web/presentation/widgets/section_title.dart';
+import 'package:portfolio_web/presentation/widgets/section_wrapper.dart';
 
 class ProjectsSection extends ConsumerWidget {
   const ProjectsSection({super.key});
@@ -18,11 +19,7 @@ class ProjectsSection extends ConsumerWidget {
 
     final projectsAsync = ref.watch(projectsProvider);
 
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 64,
-        horizontal: width > 800 ? 32 : 16,
-      ),
+    return SectionWrapper(
       child: Column(
         children: [
           const SectionTitle(title: '프로젝트'),

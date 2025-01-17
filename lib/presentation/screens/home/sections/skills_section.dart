@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_web/presentation/widgets/section_title.dart';
+import 'package:portfolio_web/presentation/widgets/section_wrapper.dart';
 
 class SkillsSection extends ConsumerWidget {
   const SkillsSection({super.key});
@@ -14,11 +15,7 @@ class SkillsSection extends ConsumerWidget {
             ? 2
             : 1;
 
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 64,
-        horizontal: width > 800 ? 32 : 16,
-      ),
+    return SectionWrapper(
       child: Column(
         children: [
           const SectionTitle(title: "기술 스택"),

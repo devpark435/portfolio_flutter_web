@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_web/presentation/widgets/section_title.dart';
+import 'package:portfolio_web/presentation/widgets/section_wrapper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactSection extends StatelessWidget {
@@ -7,13 +8,7 @@ class ContactSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 64,
-        horizontal: width > 800 ? 32 : 16,
-      ),
+    return SectionWrapper(
       child: Column(
         children: [
           const SectionTitle(title: '연락하기'),

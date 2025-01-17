@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_web/presentation/widgets/section_title.dart';
+import 'package:portfolio_web/presentation/widgets/section_wrapper.dart';
 
 class ProfileSection extends StatelessWidget {
   const ProfileSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 64,
-        horizontal: width > 800 ? 32 : 16,
-      ),
+    return SectionWrapper(
       child: Column(
         children: [
           const SectionTitle(title: '프로필'),
