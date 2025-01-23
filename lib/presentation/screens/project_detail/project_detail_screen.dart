@@ -50,8 +50,8 @@ class ProjectDetailScreen extends ConsumerWidget {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                Theme.of(context).primaryColor.withOpacity(0.6),
-                                Theme.of(context).primaryColor.withOpacity(0.2),
+                                Theme.of(context).primaryColor.withAlpha(153),
+                                Theme.of(context).primaryColor.withAlpha(50),
                               ],
                             ),
                           ),
@@ -90,7 +90,7 @@ class ProjectDetailScreen extends ConsumerWidget {
                         return Chip(
                           label: Text(tech),
                           backgroundColor:
-                              Theme.of(context).primaryColor.withOpacity(0.1),
+                              Theme.of(context).primaryColor.withAlpha(25),
                         );
                       }).toList(),
                     ),
@@ -102,9 +102,26 @@ class ProjectDetailScreen extends ConsumerWidget {
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     const SizedBox(height: 16),
-                    Text(
-                      project.metrics,
-                      style: Theme.of(context).textTheme.bodyLarge,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ...project.metrics.map((metric) => Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('• '),
+                                  Expanded(
+                                    child: Text(
+                                      metric,
+                                      style:
+                                          Theme.of(context).textTheme.bodyLarge,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )),
+                      ],
                     ),
 
                     // Project Links
