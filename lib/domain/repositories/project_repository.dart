@@ -13,7 +13,9 @@ class ProjectRepository {
         title: 'AI 기반 건강관리 플랫폼',
         description: '사용자의 생활패턴을 분석하여 맞춤형 건강 관리 솔루션을 제공하는 웹 애플리케이션',
         technologies: ['React', 'TensorFlow.js', 'Node.js', 'MongoDB'],
-        metrics: 'MAU 50,000+ / 전년 대비 사용자 만족도 32% 향상',
+        period: '2022.03 - 2023.02',
+        teamSize: '5인 팀 프로젝트',
+        metrics: ['MAU 50,000+', '전년 대비 사용자 만족도 32% 향상'],
       ),
     ];
   }
