@@ -19,6 +19,8 @@ class _ProjectCardState extends State<ProjectCard> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return MouseRegion(
       onEnter: (_) => setState(() => isHovered = true),
       onExit: (_) => setState(() => isHovered = false),
@@ -32,16 +34,49 @@ class _ProjectCardState extends State<ProjectCard> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 8,
                 children: [
                   Text(
                     widget.project.title,
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: theme.textTheme.titleLarge,
                   ),
-                  const SizedBox(height: 8),
+                  Text(
+                    widget.project.period,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Text(
+                    widget.project.teamSize,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.primaryColor,
+                    ),
+                  ),
+                  const Divider(),
                   Text(
                     widget.project.description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: widget.project.metrics.map((metric) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('• '),
+                            Expanded(
+                              child: Text(
+                                metric,
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
                   ),
                   const Spacer(),
                   Wrap(
@@ -49,9 +84,11 @@ class _ProjectCardState extends State<ProjectCard> {
                     runSpacing: 8,
                     children: widget.project.technologies.map((tech) {
                       return Chip(
-                        label: Text(tech),
-                        backgroundColor:
-                            Theme.of(context).primaryColor.withOpacity(0.1),
+                        label: Text(tech, style: theme.textTheme.bodySmall),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 0),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        backgroundColor: theme.primaryColor.withAlpha(10),
                       );
                     }).toList(),
                   ),
