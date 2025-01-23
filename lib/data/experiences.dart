@@ -28,8 +28,8 @@ final List<Experience> experiences = [
     period: '2023.08 - 2024.4',
     description: [
       '심리 테스트 웹사이트 제작',
-      'Flutter Web 활용한 반응형 디자인 구현',
       '주문 관리 시스템 개발',
+      'Flutter Web 활용한 반응형 디자인 구현',
     ],
   ),
   const Experience(
