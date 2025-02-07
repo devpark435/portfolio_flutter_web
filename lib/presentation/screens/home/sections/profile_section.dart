@@ -22,11 +22,11 @@ class ProfileSection extends StatelessWidget {
               padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
-                  const CircleAvatar(
-                    radius: 60,
-                    backgroundImage: AssetImage('assets/images/profile.jpg'),
-                  ),
-                  const SizedBox(height: 24),
+                  // const CircleAvatar(
+                  //   radius: 60,
+                  //   backgroundImage: AssetImage('/images/profile.jpeg'),
+                  // ),
+                  // const SizedBox(height: 24),
                   ...profileInfos.map(
                     (info) => ProfileInfoItem(
                       info: info,
