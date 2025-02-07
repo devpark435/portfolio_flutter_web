@@ -60,7 +60,7 @@ class _ProjectCardState extends State<ProjectCard> {
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: widget.project.metrics.map((metric) {
+                    children: widget.project.metrics.take(4).map((metric) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 2),
                         child: Row(
