@@ -70,7 +70,7 @@ class _ProjectCardState extends State<ProjectCard> {
                             Expanded(
                               child: Text(
                                 metric,
-                                style: TextStyle(fontSize: 12),
+                                style: const TextStyle(fontSize: 12),
                               ),
                             ),
                           ],
