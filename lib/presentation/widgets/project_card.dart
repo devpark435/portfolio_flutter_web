@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../domain/models/project.dart';
+import '../screens/project_detail/project_detail_screen.dart';
 
 class ProjectCard extends StatefulWidget {
   final Project project;
@@ -25,7 +26,27 @@ class _ProjectCardState extends State<ProjectCard> {
       onEnter: (_) => setState(() => isHovered = true),
       onExit: (_) => setState(() => isHovered = false),
       child: GestureDetector(
-        onTap: () => context.go('/projects/${widget.project.id}'),
+        // onTap: () => context.go('/projects/${widget.project.id}'),
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.7, // 화면의 80% 너비
+                  height:
+                      MediaQuery.of(context).size.height * 0.9, // 화면의 80% 높이
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ProjectDetailScreen(projectId: widget.project.id),
+                ),
+              );
+            },
+          );
+        },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           transform: Matrix4.identity()..scale(isHovered ? 1.05 : 1.0),
