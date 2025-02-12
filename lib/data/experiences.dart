@@ -26,10 +26,9 @@ final List<Experience> experiences = [
   const Experience(
     title: '프리랜서 외주 프로젝트',
     role: '프론트엔드 개발자',
-    period: '2023.08 - 2024.4',
+    period: '2023.08 - 2024.04',
     description: [
       '심리 테스트 웹사이트 제작',
-      '주문 관리 시스템 개발',
       'Flutter Web 활용한 반응형 디자인 구현',
     ],
   ),
@@ -42,6 +41,24 @@ final List<Experience> experiences = [
       '최종 프로젝트 리드',
       '최종 프로젝트 우수상 수상',
       '식목일앱 앱스토어 라이프스타일 차트 63위'
+    ],
+  ),
+  const Experience(
+    title: '프리랜서 외주 프로젝트',
+    role: '프론트엔드 개발자',
+    period: '2024.09 - 2024.11',
+    description: [
+      '주문 관리 시스템 개발',
+      'Flutter 활용한 iOS, AOS 어플리케이션 제작',
+    ],
+  ),
+  const Experience(
+    title: '프리랜서 외주 프로젝트',
+    role: '프론트엔드 개발자',
+    period: '2025.01 - 진행 중',
+    description: [
+      '프렌차이즈 홍보 목적 브랜딩 페이지 제작',
+      'Flutter Web 활용한 반응형 디자인 구현',
     ],
   ),
 ];
