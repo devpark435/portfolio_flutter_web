@@ -28,19 +28,19 @@ class ProjectsSection extends ConsumerWidget {
           projectsAsync.when(
             loading: () => const CircularProgressIndicator(),
             error: (err, stack) => Text('Error: $err'),
-            data: (projects) => GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: crossAxisCount,
-                crossAxisSpacing: 24,
-                mainAxisSpacing: 24,
-              ),
-              itemCount: projects.length,
-              itemBuilder: (context, index) {
-                final project = projects[index];
-                return ProjectCard(project: project);
-              },
+            data: (projects) => Wrap(
+              spacing: 24,
+              runSpacing: 24,
+              children: projects.map((project) {
+                return SizedBox(
+                  width: width > 1200
+                      ? width * 0.25 // 4개씩
+                      : width > 800
+                          ? width * 0.4 // 2개씩
+                          : width * 0.8, // 1개씩
+                  child: ProjectCard(project: project),
+                );
+              }).toList(),
             ),
           ),
         ],

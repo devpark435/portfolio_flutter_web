@@ -48,76 +48,79 @@ class _ProjectCardState extends State<ProjectCard> {
           );
         },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          transform: Matrix4.identity()..scale(isHovered ? 1.05 : 1.0),
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 8,
-                children: [
-                  Text(
-                    widget.project.title,
-                    style: theme.textTheme.titleLarge,
-                  ),
-                  Text(
-                    widget.project.period,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey,
+            duration: const Duration(milliseconds: 200),
+            transform: Matrix4.identity()..scale(isHovered ? 1.05 : 1.0),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min, // 내용물 크기에 맞춤
+                  children: [
+                    Text(
+                      widget.project.title,
+                      style: theme.textTheme.titleLarge,
                     ),
-                  ),
-                  Text(
-                    widget.project.teamSize,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.primaryColor,
+                    const SizedBox(height: 8),
+                    Text(
+                      widget.project.period,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey,
+                      ),
                     ),
-                  ),
-                  const Divider(),
-                  Text(
-                    widget.project.description,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: widget.project.metrics.take(4).map((metric) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('• '),
-                            Expanded(
-                              child: Text(
-                                metric,
-                                style: const TextStyle(fontSize: 12),
+                    const SizedBox(height: 4),
+                    Text(
+                      widget.project.teamSize,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.primaryColor,
+                      ),
+                    ),
+                    const Divider(height: 16),
+                    Text(
+                      widget.project.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: widget.project.metrics.take(4).map((metric) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('• '),
+                              Expanded(
+                                child: Text(
+                                  metric,
+                                  style: const TextStyle(fontSize: 12),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const Spacer(),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: widget.project.technologies.map((tech) {
-                      return Chip(
-                        label: Text(tech, style: theme.textTheme.bodySmall),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 0),
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        backgroundColor: theme.primaryColor.withAlpha(10),
-                      );
-                    }).toList(),
-                  ),
-                ],
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 16),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: widget.project.technologies.map((tech) {
+                        return Chip(
+                          label: Text(tech, style: theme.textTheme.bodySmall),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 0),
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          backgroundColor: theme.primaryColor.withAlpha(10),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ),
-        ),
+            )),
       ),
     );
   }
