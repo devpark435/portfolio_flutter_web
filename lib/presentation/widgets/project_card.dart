@@ -28,15 +28,21 @@ class _ProjectCardState extends State<ProjectCard> {
       child: GestureDetector(
         // onTap: () => context.go('/projects/${widget.project.id}'),
         onTap: () {
+          final width = MediaQuery.of(context).size.width;
+          final isMobile = width <= 800;
+
           showDialog(
             context: context,
             builder: (BuildContext context) {
               return Dialog(
                 backgroundColor: Colors.transparent,
                 child: Container(
-                  width: MediaQuery.of(context).size.width * 0.7, // 화면의 80% 너비
-                  height:
-                      MediaQuery.of(context).size.height * 0.9, // 화면의 80% 높이
+                  width: isMobile
+                      ? MediaQuery.of(context).size.width * 0.95 // 모바일에서는 95%
+                      : MediaQuery.of(context).size.width * 0.7, // 데스크톱에서는 70%
+                  height: isMobile
+                      ? MediaQuery.of(context).size.height * 0.95 // 모바일에서는 95%
+                      : MediaQuery.of(context).size.height * 0.9, // 데스크톱에서는 90%
                   decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(8),

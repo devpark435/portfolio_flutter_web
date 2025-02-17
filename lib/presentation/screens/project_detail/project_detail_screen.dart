@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:portfolio_web/config/providers/providers.dart';
 
 class ProjectDetailScreen extends ConsumerWidget {
@@ -35,7 +34,7 @@ class ProjectDetailScreen extends ConsumerWidget {
                 pinned: true,
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back),
-                  onPressed: () => context.go('/'),
+                  onPressed: () => Navigator.pop(context),
                 ),
                 flexibleSpace: FlexibleSpaceBar(
                   title: Text(project.title),
@@ -66,30 +65,69 @@ class ProjectDetailScreen extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     final section = [
                       // Period & Team
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.calendar_today,
-                            color: Theme.of(context).primaryColor,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            project.period,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(width: 24),
-                          Icon(
-                            Icons.people,
-                            color: Theme.of(context).primaryColor,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            project.teamSize,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ],
+                      Builder(
+                        builder: (context) {
+                          final width = MediaQuery.of(context).size.width;
+                          final isMobile = width <= 800;
+
+                          final periodSection = Row(
+                            children: [
+                              Icon(
+                                Icons.calendar_today,
+                                color: Theme.of(context).primaryColor,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                project.period,
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ],
+                          );
+
+                          final teamSection = Row(
+                            children: [
+                              Icon(
+                                Icons.people,
+                                color: Theme.of(context).primaryColor,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              // 모바일에서만 Expanded 사용
+                              if (isMobile)
+                                Expanded(
+                                  child: Text(
+                                    project.teamSize,
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                )
+                              else
+                                Text(
+                                  project.teamSize,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                            ],
+                          );
+
+                          return isMobile
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    periodSection,
+                                    const SizedBox(height: 8),
+                                    teamSection,
+                                  ],
+                                )
+                              : Row(
+                                  children: [
+                                    periodSection,
+                                    const SizedBox(width: 24),
+                                    teamSection,
+                                  ],
+                                );
+                        },
                       ),
 
                       // Project Links
