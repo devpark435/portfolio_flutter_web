@@ -13,22 +13,29 @@ class ExperienceSection extends StatelessWidget {
     final isMobile = width <= 800;
 
     return SectionWrapper(
-      child: Column(
-        children: [
-          const SectionTitle(title: '활동 경험'),
-          const SizedBox(height: 48),
-          Column(
-            children: experiences
-                .map((experience) => Padding(
-                      padding: const EdgeInsets.only(bottom: 32),
-                      child: ExperienceCard(
-                        experience: experience,
-                        isMobile: isMobile,
-                      ),
-                    ))
-                .toList(),
-          ),
-        ],
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+            horizontal: width > 800
+                ? 42.0 // 데스크톱일 때 패딩
+                : 20.0 // 모바일일 때 패딩
+            ),
+        child: Column(
+          children: [
+            const SectionTitle(title: '활동 경험'),
+            const SizedBox(height: 48),
+            Column(
+              children: experiences
+                  .map((experience) => Padding(
+                        padding: const EdgeInsets.only(bottom: 32),
+                        child: ExperienceCard(
+                          experience: experience,
+                          isMobile: isMobile,
+                        ),
+                      ))
+                  .toList(),
+            ),
+          ],
+        ),
       ),
     );
   }
