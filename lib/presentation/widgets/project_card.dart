@@ -112,7 +112,7 @@ class _ProjectCardState extends State<ProjectCard> {
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: widget.project.technologies.map((tech) {
+                      children: widget.project.technologies.take(6).map((tech) {
                         return Chip(
                           label: Text(tech, style: theme.textTheme.bodySmall),
                           padding: const EdgeInsets.symmetric(
