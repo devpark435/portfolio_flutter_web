@@ -4,6 +4,8 @@ import 'package:portfolio_web/config/providers/providers.dart';
 import 'package:portfolio_web/presentation/widgets/project_card.dart';
 import 'package:portfolio_web/presentation/widgets/section_title.dart';
 import 'package:portfolio_web/presentation/widgets/section_wrapper.dart';
+
+import '../../../widgets/contact_button.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
 class ProjectsSection extends ConsumerWidget {
@@ -12,19 +14,14 @@ class ProjectsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final width = MediaQuery.of(context).size.width;
-    final crossAxisCount = width > 1200
-        ? 3
-        : width > 800
-            ? 2
-            : 1;
 
     final projectsAsync = ref.watch(projectsProvider);
 
     return SectionWrapper(
       child: Column(
+        spacing: 48,
         children: [
           const SectionTitle(title: '프로젝트'),
-          const SizedBox(height: 48),
           projectsAsync.when(
             loading: () => const CircularProgressIndicator(),
             error: (err, stack) => Text('Error: $err'),
@@ -42,6 +39,11 @@ class ProjectsSection extends ConsumerWidget {
                 );
               }).toList(),
             ),
+          ),
+          const ContactButton(
+            label: '프로젝트 더보기',
+            icon: Icons.code,
+            url: 'https://github.com/devpark435',
           ),
         ],
       ),

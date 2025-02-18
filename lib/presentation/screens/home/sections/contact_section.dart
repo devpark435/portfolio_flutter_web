@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio_web/presentation/widgets/section_title.dart';
 import 'package:portfolio_web/presentation/widgets/section_wrapper.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:portfolio_web/presentation/widgets/contact_button.dart';
 
 class ContactSection extends StatelessWidget {
   const ContactSection({super.key});
@@ -19,56 +19,29 @@ class ContactSection extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 48),
-          Wrap(
+          const Wrap(
             spacing: 16,
             runSpacing: 16,
             alignment: WrapAlignment.center,
             children: [
-              _buildContactButton(
-                context,
-                'GitHub',
-                Icons.code,
-                'https://github.com/devpark435',
+              ContactButton(
+                label: 'GitHub',
+                icon: Icons.code,
+                url: 'https://github.com/devpark435',
               ),
-              _buildContactButton(
-                context,
-                'LinkedIn',
-                Icons.business_center,
-                'https://linkedin.com/in/yourusername',
+              ContactButton(
+                label: 'LinkedIn',
+                icon: Icons.business_center,
+                url: 'https://linkedin.com/in/yourusername',
               ),
-              _buildContactButton(
-                context,
-                'Email',
-                Icons.email,
-                'mailto:your.email@example.com',
+              ContactButton(
+                label: 'Email',
+                icon: Icons.email,
+                url: 'mailto:your.email@example.com',
               ),
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildContactButton(
-    BuildContext context,
-    String label,
-    IconData icon,
-    String url,
-  ) {
-    return ElevatedButton.icon(
-      onPressed: () async {
-        final uri = Uri.parse(url);
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri);
-        }
-      },
-      icon: Icon(icon),
-      label: Text(label),
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 24,
-          vertical: 16,
-        ),
       ),
     );
   }
