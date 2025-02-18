@@ -11,7 +11,7 @@ const List<ProfileInfo> profileInfos = [
   ),
   ProfileInfo(
     label: '위치',
-    values: ['서울특별시 관악구'],
+    values: ['서울특별시 중랑구'],
   ),
   ProfileInfo(
     label: '이메일',
