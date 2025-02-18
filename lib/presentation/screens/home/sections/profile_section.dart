@@ -19,22 +19,47 @@ class ProfileSection extends StatelessWidget {
           const SizedBox(height: 48),
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                children: [
-                  // const CircleAvatar(
-                  //   radius: 60,
-                  //   backgroundImage: AssetImage('/images/profile.jpeg'),
-                  // ),
-                  // const SizedBox(height: 24),
-                  ...profileInfos.map(
-                    (info) => ProfileInfoItem(
-                      info: info,
-                      isMobile: isMobile,
+              padding: const EdgeInsets.all(32),
+              child: isMobile
+                  ? Column(
+                      children: profileInfos
+                          .map((info) => ProfileInfoItem(
+                                info: info,
+                                isMobile: true,
+                              ))
+                          .toList(),
+                    )
+                  : Row(
+                      // 2열 구조
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          // 왼쪽 열
+                          child: Column(
+                            children: profileInfos
+                                .take(3)
+                                .map((info) => ProfileInfoItem(
+                                      info: info,
+                                      isMobile: false,
+                                    ))
+                                .toList(),
+                          ),
+                        ),
+                        Expanded(
+                          // 오른쪽 열
+                          child: Column(
+                            children: profileInfos
+                                .skip(3)
+                                .take(3)
+                                .map((info) => ProfileInfoItem(
+                                      info: info,
+                                      isMobile: false,
+                                    ))
+                                .toList(),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
             ),
           ),
         ],

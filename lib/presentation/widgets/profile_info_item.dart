@@ -11,34 +11,61 @@ class ProfileInfoItem extends StatelessWidget {
     required this.isMobile,
   });
 
+  IconData _getIcon() {
+    switch (info.label) {
+      case '이름':
+        return Icons.person;
+      case '생년월일':
+        return Icons.calendar_today;
+      case '위치':
+        return Icons.location_on;
+      case '연락처':
+        return Icons.phone;
+      case '이메일':
+        return Icons.email;
+      case '학력':
+        return Icons.school;
+      case '관심 분야':
+        return Icons.lightbulb;
+      default:
+        return Icons.info;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return isMobile
-        ? _buildMobileLayout(context)
-        : _buildDesktopLayout(context);
+    if (isMobile) {
+      return _buildMobileLayout(context);
+    }
+    return _buildDesktopLayout(context);
   }
 
   Widget _buildMobileLayout(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16), // 좌우 패딩 추가로 화면 가장자리와 간격 확보
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       child: Row(
-        // Column 대신 Row 사용
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Icon(
+            _getIcon(),
+            color: Theme.of(context).primaryColor,
+            size: 24,
+          ),
+          const SizedBox(width: 16),
           Expanded(
-            // 텍스트들이 전체 너비를 사용하도록
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start, // 모든 텍스트 좌측 정렬
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   info.label,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: Theme.of(context).primaryColor,
                       ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
                 ...info.values.map(
                   (value) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    padding: const EdgeInsets.only(top: 2),
                     child: Text(
                       value,
                       style: Theme.of(context).textTheme.titleMedium,
@@ -54,32 +81,41 @@ class ProfileInfoItem extends StatelessWidget {
   }
 
   Widget _buildDesktopLayout(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+    final textColor = Theme.of(context).primaryColor;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween, // 좌우 정렬
         children: [
           SizedBox(
-            width: 100,
-            child: Text(
-              info.label,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).primaryColor,
-                  ),
-              textAlign: TextAlign.left,
-            ),
-          ),
-          const SizedBox(width: 24),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: info.values
-                  .map((value) => Text(
-                        value,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ))
-                  .toList(),
+            // 왼쪽 영역
+            width: 300, // 고정 너비
+            child: Row(
+              children: [
+                Icon(
+                  _getIcon(),
+                  color: textColor,
+                  size: 32,
+                ),
+                const SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      info.label,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: textColor,
+                          ),
+                    ),
+                    const SizedBox(height: 4),
+                    ...info.values.map((value) => Text(
+                          value,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        )),
+                  ],
+                ),
+              ],
             ),
           ),
         ],

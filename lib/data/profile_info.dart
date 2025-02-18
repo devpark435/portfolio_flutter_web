@@ -10,8 +10,12 @@ const List<ProfileInfo> profileInfos = [
     values: ['98.10.31'],
   ),
   ProfileInfo(
-    label: '성별',
-    values: ['남성'],
+    label: '위치',
+    values: ['서울특별시 관악구'],
+  ),
+  ProfileInfo(
+    label: '이메일',
+    values: ['devpark435@gmail.com'],
   ),
   ProfileInfo(
     label: '학력',
