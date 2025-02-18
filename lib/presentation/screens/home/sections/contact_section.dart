@@ -32,12 +32,12 @@ class ContactSection extends StatelessWidget {
               ContactButton(
                 label: 'LinkedIn',
                 icon: Icons.business_center,
-                url: 'https://linkedin.com/in/yourusername',
+                url: 'https://www.linkedin.com/in/%ED%98%84%EB%A0%AC%EB%B0%95/',
               ),
               ContactButton(
                 label: 'Email',
                 icon: Icons.email,
-                url: 'mailto:your.email@example.com',
+                url: 'mailto:devpark435@gmail.com',
               ),
             ],
           ),
