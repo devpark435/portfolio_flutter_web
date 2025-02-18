@@ -11,29 +11,25 @@ class SkillsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final width = MediaQuery.of(context).size.width;
-    final crossAxisCount = width > 1200
-        ? 3
-        : width > 800
-            ? 2
-            : 1;
 
     return SectionWrapper(
       child: Column(
         children: [
           const SectionTitle(title: "기술 스택"),
           const SizedBox(height: 48),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              crossAxisSpacing: 24,
-              mainAxisSpacing: 24,
-              childAspectRatio: width > 800 ? 1.2 : 1.0,
-              mainAxisExtent: 350, // 카드의 최대 높이 지정
-            ),
-            itemCount: skills.length,
-            itemBuilder: (context, index) => SkillCard(skill: skills[index]),
+          Wrap(
+            spacing: 24,
+            runSpacing: 24,
+            children: skills.map((skill) {
+              return SizedBox(
+                width: width > 1200
+                    ? width * 0.25 // 3개씩
+                    : width > 800
+                        ? width * 0.4 // 2개씩
+                        : width * 0.8, // 1개씩
+                child: SkillCard(skill: skill),
+              );
+            }).toList(),
           ),
         ],
       ),
