@@ -25,7 +25,7 @@ class SectionWrapper extends StatelessWidget {
           ),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1200),
+          constraints: const BoxConstraints(maxWidth: 900), // 최대 너비 제한
           child: child,
         ),
       ),
