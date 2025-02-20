@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_web/config/providers/providers.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProjectDetailScreen extends ConsumerWidget {
   final String projectId;
@@ -165,7 +166,12 @@ class ProjectDetailScreen extends ConsumerWidget {
                                   ),
                                 if (project.githubUrl != null)
                                   OutlinedButton.icon(
-                                    onPressed: () {/* URL 실행 */},
+                                    onPressed: () async {
+                                      final url = Uri.parse(project.githubUrl!);
+                                      if (await canLaunchUrl(url)) {
+                                        await launchUrl(url);
+                                      }
+                                    },
                                     icon: const Icon(Icons.code),
                                     label: const Text('Source Code'),
                                     style: OutlinedButton.styleFrom(
