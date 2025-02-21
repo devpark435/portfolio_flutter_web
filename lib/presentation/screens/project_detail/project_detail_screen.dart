@@ -26,6 +26,7 @@ class ProjectDetailScreen extends ConsumerWidget {
         final project = projects.firstWhere((p) => p.id == projectId);
 
         return Scaffold(
+          backgroundColor: Theme.of(context).cardColor,
           body: CustomScrollView(
             slivers: [
               // App Bar
@@ -38,24 +39,31 @@ class ProjectDetailScreen extends ConsumerWidget {
                   onPressed: () => Navigator.pop(context),
                 ),
                 flexibleSpace: FlexibleSpaceBar(
-                  title: Text(project.title),
-                  background: project.imageUrl != null
-                      ? Image.network(
-                          project.imageUrl!,
-                          fit: BoxFit.cover,
-                        )
-                      : Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Theme.of(context).primaryColor.withAlpha(153),
-                                Theme.of(context).primaryColor.withAlpha(50),
-                              ],
-                            ),
-                          ),
-                        ),
+                  title: Text(
+                    project.title,
+                    style: const TextStyle(fontSize: 16), // 폰트 크기 조정
+                    overflow: TextOverflow.ellipsis, // 오버플로우 처리
+                  ),
+                  centerTitle: true, // 제목 중앙 정렬
+                  titlePadding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width > 800
+                        ? 40
+                        : 48, // 좌측 패딩 조정
+                    right: 40,
+                    bottom: 16,
+                  ),
+                  background: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Theme.of(context).primaryColor.withAlpha(153),
+                          Theme.of(context).primaryColor.withAlpha(50),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
 
@@ -204,7 +212,59 @@ class ProjectDetailScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            project.description,
+                            project.summary,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+
+                      // Background
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.lightbulb,
+                                color: Theme.of(context).primaryColor,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Background',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            project.background,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+
+                      // Meaning
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.insights,
+                                color: Theme.of(context).primaryColor,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Meaning',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            project.meaning,
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ],
@@ -257,13 +317,13 @@ class ProjectDetailScreen extends ConsumerWidget {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                '주요 기능',
+                                'Key Features',
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                             ],
                           ),
                           const SizedBox(height: 16),
-                          ...project.metrics.map((metric) => Padding(
+                          ...project.keyFeatures.map((feature) => Padding(
                                 padding: const EdgeInsets.only(bottom: 12),
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,7 +331,85 @@ class ProjectDetailScreen extends ConsumerWidget {
                                     const Text('• '),
                                     Expanded(
                                       child: Text(
-                                        metric,
+                                        feature,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )),
+                        ],
+                      ),
+
+                      // Challenges
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.engineering,
+                                color: Theme.of(context).primaryColor,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Challenges',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          ...project.challenges.map((challenge) => Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text('• '),
+                                    Expanded(
+                                      child: Text(
+                                        challenge,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )),
+                        ],
+                      ),
+
+                      // Improvements
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.trending_up,
+                                color: Theme.of(context).primaryColor,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Future Improvements',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          ...project.improvements.map((improvement) => Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text('• '),
+                                    Expanded(
+                                      child: Text(
+                                        improvement,
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyLarge,
@@ -283,12 +421,11 @@ class ProjectDetailScreen extends ConsumerWidget {
                         ],
                       ),
                     ];
-
                     return section[index];
                   },
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 48),
-                  itemCount: 5, // 섹션의 총 개수
+                  itemCount: 8, // 섹션의 총 개수
                 ),
               ),
             ],

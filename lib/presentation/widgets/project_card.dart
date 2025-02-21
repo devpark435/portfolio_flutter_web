@@ -83,14 +83,15 @@ class _ProjectCardState extends State<ProjectCard> {
                     ),
                     const Divider(height: 16),
                     Text(
-                      widget.project.description,
+                      widget.project.summary,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 8),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: widget.project.metrics.take(4).map((metric) {
+                      children:
+                          widget.project.keyFeatures.take(4).map((keyFeatures) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 2),
                           child: Row(
@@ -99,7 +100,7 @@ class _ProjectCardState extends State<ProjectCard> {
                               const Text('• '),
                               Expanded(
                                 child: Text(
-                                  metric,
+                                  keyFeatures,
                                   style: const TextStyle(fontSize: 12),
                                 ),
                               ),
