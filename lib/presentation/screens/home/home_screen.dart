@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_web/config/providers/providers.dart';
+import 'package:portfolio_web/presentation/screens/home/sections/award_section.dart';
 import 'package:portfolio_web/presentation/screens/home/sections/contact_section.dart';
 import 'package:portfolio_web/presentation/screens/home/sections/experience_section.dart';
 import 'package:portfolio_web/presentation/screens/home/sections/profile_section.dart';
@@ -36,18 +37,24 @@ class HomeScreen extends ConsumerWidget {
               SliverToBoxAdapter(
                 child: Container(
                   color: Theme.of(context).colorScheme.surface,
-                  child: const ProjectsSection(),
+                  child: const AwardsSection(),
                 ),
               ),
               SliverToBoxAdapter(
                 child: Container(
                   color: Theme.of(context).colorScheme.surface.withAlpha(50),
-                  child: const SkillsSection(),
+                  child: const ProjectsSection(),
                 ),
               ),
               SliverToBoxAdapter(
                 child: Container(
                   color: Theme.of(context).colorScheme.surface,
+                  child: const SkillsSection(),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  color: Theme.of(context).colorScheme.surface.withAlpha(50),
                   child: const ContactSection(),
                 ),
               ),
