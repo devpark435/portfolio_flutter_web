@@ -23,9 +23,23 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       
+      # 웹 에셋 디렉토리 확인 및 에셋 복사 단계 추가
+      - name: Ensure web assets directory exists
+        run: |
+          mkdir -p web/assets/images
+          cp -r assets/images/* web/assets/images/ || echo "No assets to copy or directory not found"
+      
       - name: Build
         run: |
           flutter build web --release --web-renderer canvaskit --base-href "/portfolio_flutter_web/"
+      
+      # 빌드 후 에셋 복사 확인 단계 추가
+      - name: Copy assets to build output if needed
+        run: |
+          if [ -d "assets/images" ] && [ ! -d "build/web/assets/images" ]; then
+            mkdir -p build/web/assets/images
+            cp -r assets/images/* build/web/assets/images/
+          fi
       
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
@@ -38,3 +52,5 @@ jobs:
         run: |
           echo "Listing contents of build/web directory:"
           ls -la build/web
+          echo "Listing contents of assets directory (if exists):"
+          ls -la build/web/assets || echo "No assets directory"
