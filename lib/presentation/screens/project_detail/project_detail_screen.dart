@@ -41,28 +41,56 @@ class ProjectDetailScreen extends ConsumerWidget {
                 flexibleSpace: FlexibleSpaceBar(
                   title: Text(
                     project.title,
-                    style: const TextStyle(fontSize: 16), // 폰트 크기 조정
-                    overflow: TextOverflow.ellipsis, // 오버플로우 처리
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Theme.of(context).textTheme.titleLarge?.color,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  centerTitle: true, // 제목 중앙 정렬
+                  centerTitle: true,
                   titlePadding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width > 800
-                        ? 40
-                        : 48, // 좌측 패딩 조정
+                    left: MediaQuery.of(context).size.width > 800 ? 40 : 48,
                     right: 40,
                     bottom: 16,
                   ),
-                  background: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Theme.of(context).primaryColor.withAlpha(153),
-                          Theme.of(context).primaryColor.withAlpha(50),
-                        ],
+                  background: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      project.imageUrl != null
+                          ? Image.asset(
+                              project.imageUrl!,
+                              fit: BoxFit.contain,
+                            )
+                          : Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Theme.of(context)
+                                        .primaryColor
+                                        .withAlpha(153),
+                                    Theme.of(context)
+                                        .primaryColor
+                                        .withAlpha(50),
+                                  ],
+                                ),
+                              ),
+                            ),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Theme.of(context).scaffoldBackgroundColor,
+                            ],
+                            stops: const [0.7, 1.0],
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),
@@ -164,7 +192,12 @@ class ProjectDetailScreen extends ConsumerWidget {
                               children: [
                                 if (project.demoUrl != null)
                                   OutlinedButton.icon(
-                                    onPressed: () {/* URL 실행 */},
+                                    onPressed: () async {
+                                      final url = Uri.parse(project.demoUrl!);
+                                      if (await canLaunchUrl(url)) {
+                                        await launchUrl(url);
+                                      }
+                                    },
                                     icon: const Icon(Icons.launch),
                                     label: const Text('Live Demo'),
                                     style: OutlinedButton.styleFrom(
