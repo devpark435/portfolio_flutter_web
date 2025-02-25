@@ -418,6 +418,47 @@ class ProjectDetailScreen extends ConsumerWidget {
                         ],
                       ),
 
+                      // Responsibilities 섹션
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.assignment_ind,
+                                color: Theme.of(context).primaryColor,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '담당 업무',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          ...project.responsibilities
+                              .map((responsibility) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 12),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text('• '),
+                                        Expanded(
+                                          child: Text(
+                                            responsibility,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                        ],
+                      ),
+
                       // Troubleshooting
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -606,7 +647,7 @@ class ProjectDetailScreen extends ConsumerWidget {
                   },
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 48),
-                  itemCount: 9, // 섹션의 총 개수 (트러블슈팅 추가)
+                  itemCount: 10, // 섹션의 총 개수
                 ),
               ),
             ],

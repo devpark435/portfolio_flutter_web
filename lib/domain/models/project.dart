@@ -11,6 +11,7 @@ class Project {
   final List<String> technologies; // 사용된 기술 스택
   final List<String> challenges; // 도전 과제 및 해결 방법
   final List<Troubleshooting> troubleshooting; // 구체적인 문제 해결 사례
+  final List<String> responsibilities; // 담당 업무 및 역할
   final List<String> improvements; // 개선점 및 향후 계획
   final String period; // 프로젝트 진행 기간
   final String teamSize; // 팀 구성
@@ -28,7 +29,8 @@ class Project {
     required this.description,
     required this.technologies,
     required this.challenges,
-    required this.troubleshooting, // 추가된 필드
+    required this.troubleshooting,
+    required this.responsibilities, // 추가된 필드
     required this.improvements,
     required this.period,
     required this.teamSize,
