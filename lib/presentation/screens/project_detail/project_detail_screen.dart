@@ -137,6 +137,9 @@ class ProjectDetailScreen extends ConsumerWidget {
                                     project.teamSize,
                                     style:
                                         Theme.of(context).textTheme.titleMedium,
+                                    overflow:
+                                        TextOverflow.visible, // 필요시 줄바꿈 허용
+                                    softWrap: true,
                                   ),
                                 )
                               else
@@ -181,7 +184,7 @@ class ProjectDetailScreen extends ConsumerWidget {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'Deployment URL',
+                                  '배포 URL',
                                   style: Theme.of(context).textTheme.titleLarge,
                                 ),
                               ],
@@ -199,7 +202,7 @@ class ProjectDetailScreen extends ConsumerWidget {
                                       }
                                     },
                                     icon: const Icon(Icons.launch),
-                                    label: const Text('Live Demo'),
+                                    label: const Text('라이브 데모'),
                                     style: OutlinedButton.styleFrom(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 16, vertical: 12),
@@ -214,7 +217,7 @@ class ProjectDetailScreen extends ConsumerWidget {
                                       }
                                     },
                                     icon: const Icon(Icons.code),
-                                    label: const Text('Source Code'),
+                                    label: const Text('소스 코드'),
                                     style: OutlinedButton.styleFrom(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 16, vertical: 12),
@@ -238,7 +241,7 @@ class ProjectDetailScreen extends ConsumerWidget {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Summary',
+                                '프로젝트 요약',
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                             ],
@@ -264,7 +267,7 @@ class ProjectDetailScreen extends ConsumerWidget {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Background',
+                                '개발 배경',
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                             ],
@@ -290,7 +293,7 @@ class ProjectDetailScreen extends ConsumerWidget {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Meaning',
+                                '배운 점',
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                             ],
@@ -350,7 +353,7 @@ class ProjectDetailScreen extends ConsumerWidget {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Key Features',
+                                '주요 기능',
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                             ],
@@ -389,7 +392,7 @@ class ProjectDetailScreen extends ConsumerWidget {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Challenges',
+                                '도전 과제',
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                             ],
@@ -415,6 +418,151 @@ class ProjectDetailScreen extends ConsumerWidget {
                         ],
                       ),
 
+                      // Troubleshooting
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.bug_report,
+                                color: Theme.of(context).primaryColor,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '문제 해결',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          ...project.troubleshooting.map((item) => Padding(
+                                padding: const EdgeInsets.only(bottom: 24),
+                                child: Card(
+                                  elevation: 2,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    side: BorderSide(
+                                      color: Theme.of(context)
+                                          .primaryColor
+                                          .withAlpha(51), // 0.2 * 255 = 51
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // 문제
+                                        Text(
+                                          item.issue,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: Theme.of(context)
+                                                    .primaryColor,
+                                              ),
+                                        ),
+                                        const SizedBox(height: 12),
+
+                                        // 상황
+                                        Text(
+                                          '상황',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Text('• '),
+                                            Expanded(
+                                              child: Text(
+                                                item.context,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 12),
+
+                                        // 해결
+                                        Text(
+                                          '해결',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Text('• '),
+                                            Expanded(
+                                              child: Text(
+                                                item.solution,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 12),
+
+                                        // 배운 점
+                                        Text(
+                                          '배운 점',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: Theme.of(context)
+                                                    .primaryColor
+                                                    .withAlpha(204),
+                                              ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Text('• '),
+                                            Expanded(
+                                              child: Text(
+                                                item.learning,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )),
+                        ],
+                      ),
+
                       // Improvements
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -428,7 +576,7 @@ class ProjectDetailScreen extends ConsumerWidget {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Future Improvements',
+                                '향후 개선 계획',
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                             ],
@@ -458,7 +606,7 @@ class ProjectDetailScreen extends ConsumerWidget {
                   },
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 48),
-                  itemCount: 8, // 섹션의 총 개수
+                  itemCount: 9, // 섹션의 총 개수 (트러블슈팅 추가)
                 ),
               ),
             ],
