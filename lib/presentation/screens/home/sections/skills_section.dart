@@ -10,26 +10,45 @@ class SkillsSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final width = MediaQuery.of(context).size.width;
-
     return SectionWrapper(
       child: Column(
         children: [
           const SectionTitle(title: "기술 스택"),
           const SizedBox(height: 48),
-          Wrap(
-            spacing: 24,
-            runSpacing: 24,
-            children: skills.map((skill) {
-              return SizedBox(
-                width: width > 1200
-                    ? width * 0.25 // 3개씩
-                    : width > 800
-                        ? width * 0.4 // 2개씩
-                        : width * 0.8, // 1개씩
-                child: SkillCard(skill: skill),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final availableWidth = constraints.maxWidth;
+
+              // 화면 너비별 카드 개수 및 너비 계산
+              int itemsPerRow;
+              double cardWidth;
+
+              if (availableWidth > 1200) {
+                itemsPerRow = 3; // 대형 화면: 3개
+              } else if (availableWidth > 800) {
+                itemsPerRow = 2; // 중간 화면: 2개
+              } else {
+                itemsPerRow = 1; // 모바일: 1개
+              }
+
+              // 간격을 고려한 카드 너비 계산
+              // 공식: (전체 너비 - (카드 사이 간격 * (카드 개수-1))) / 카드 개수
+              const spacing = 24.0; // Wrap의 spacing 값
+              cardWidth = (availableWidth - (spacing * (itemsPerRow - 1))) /
+                  itemsPerRow;
+
+              return Wrap(
+                spacing: spacing, // 가로 간격
+                runSpacing: 24, // 세로 간격
+                alignment: WrapAlignment.start,
+                children: skills.map((skill) {
+                  return SizedBox(
+                    width: cardWidth,
+                    child: SkillCard(skill: skill),
+                  );
+                }).toList(),
               );
-            }).toList(),
+            },
           ),
         ],
       ),
