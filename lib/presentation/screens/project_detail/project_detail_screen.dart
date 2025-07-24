@@ -26,148 +26,228 @@ class ProjectDetailScreen extends ConsumerWidget {
         final project = projects.firstWhere((p) => p.id == projectId);
 
         return Scaffold(
-          backgroundColor: Theme.of(context).cardColor,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: CustomScrollView(
             slivers: [
-              // App Bar
-              SliverAppBar(
-                expandedHeight: 300.0,
-                floating: false,
-                pinned: true,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                flexibleSpace: FlexibleSpaceBar(
-                  title: Text(
-                    project.title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).textTheme.titleLarge?.color,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  centerTitle: true,
-                  titlePadding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width > 800 ? 40 : 48,
-                    right: 40,
-                    bottom: 16,
-                  ),
-                  background: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      project.imageUrl != null
-                          ? Image.asset(
-                              project.imageUrl!,
-                              fit: BoxFit.contain,
-                            )
-                          : Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Theme.of(context)
-                                        .primaryColor
-                                        .withAlpha(153),
-                                    Theme.of(context)
-                                        .primaryColor
-                                        .withAlpha(50),
-                                  ],
-                                ),
-                              ),
-                            ),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              Theme.of(context).scaffoldBackgroundColor,
-                            ],
-                            stops: const [0.7, 1.0],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
               // Content
               SliverPadding(
                 padding: const EdgeInsets.all(24.0),
                 sliver: SliverList.separated(
                   itemBuilder: (context, index) {
                     final section = [
-                      // Period & Team
-                      Builder(
-                        builder: (context) {
-                          final width = MediaQuery.of(context).size.width;
-                          final isMobile = width <= 800;
-
-                          final periodSection = Row(
-                            children: [
-                              Icon(
-                                Icons.calendar_today,
-                                color: Theme.of(context).primaryColor,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                project.period,
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                            ],
-                          );
-
-                          final teamSection = Row(
-                            children: [
-                              Icon(
-                                Icons.people,
-                                color: Theme.of(context).primaryColor,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              // 모바일에서만 Expanded 사용
-                              if (isMobile)
-                                Expanded(
-                                  child: Text(
-                                    project.teamSize,
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
-                                    overflow:
-                                        TextOverflow.visible, // 필요시 줄바꿈 허용
-                                    softWrap: true,
-                                  ),
-                                )
-                              else
-                                Text(
-                                  project.teamSize,
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
+                      // Project Title
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            project.title,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).primaryColor,
                                 ),
-                            ],
-                          );
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '프로젝트 상세 정보',
+                            style:
+                                Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color
+                                          ?.withOpacity(0.7),
+                                    ),
+                          ),
+                        ],
+                      ),
 
-                          return isMobile
-                              ? Column(
+                      // Project Image
+                      if (project.imageUrl != null)
+                        Container(
+                          height: 200,
+                          width: double.infinity,
+                          margin: const EdgeInsets.only(top: 16),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color:
+                                Theme.of(context).primaryColor.withOpacity(0.1),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Image.asset(
+                              project.imageUrl!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Theme.of(context)
+                                            .primaryColor
+                                            .withOpacity(0.1),
+                                        Theme.of(context)
+                                            .primaryColor
+                                            .withOpacity(0.05),
+                                      ],
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    Icons.code,
+                                    size: 64,
+                                    color: Theme.of(context)
+                                        .primaryColor
+                                        .withOpacity(0.5),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+
+                      // Period & Team
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color:
+                              Theme.of(context).primaryColor.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color:
+                                Theme.of(context).primaryColor.withOpacity(0.1),
+                            width: 1,
+                          ),
+                        ),
+                        child: Builder(
+                          builder: (context) {
+                            final width = MediaQuery.of(context).size.width;
+                            final isMobile = width <= 800;
+
+                            final periodSection = Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context)
+                                        .primaryColor
+                                        .withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(
+                                    Icons.calendar_today,
+                                    color: Theme.of(context).primaryColor,
+                                    size: 20,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    periodSection,
-                                    const SizedBox(height: 8),
-                                    teamSection,
+                                    Text(
+                                      '프로젝트 기간',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall
+                                                ?.color
+                                                ?.withOpacity(0.7),
+                                          ),
+                                    ),
+                                    Text(
+                                      project.period,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                    ),
                                   ],
-                                )
-                              : Row(
+                                ),
+                              ],
+                            );
+
+                            final teamSection = Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context)
+                                        .primaryColor
+                                        .withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(
+                                    Icons.people,
+                                    color: Theme.of(context).primaryColor,
+                                    size: 20,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    periodSection,
-                                    const SizedBox(width: 24),
-                                    teamSection,
+                                    Text(
+                                      '팀 구성',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall
+                                                ?.color
+                                                ?.withOpacity(0.7),
+                                          ),
+                                    ),
+                                    Text(
+                                      project.teamSize,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                    ),
                                   ],
-                                );
-                        },
+                                ),
+                              ],
+                            );
+
+                            return isMobile
+                                ? Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      periodSection,
+                                      const SizedBox(height: 16),
+                                      teamSection,
+                                    ],
+                                  )
+                                : Row(
+                                    children: [
+                                      Expanded(child: periodSection),
+                                      Container(
+                                        height: 40,
+                                        width: 1,
+                                        color: Theme.of(context)
+                                            .primaryColor
+                                            .withOpacity(0.2),
+                                      ),
+                                      const SizedBox(width: 24),
+                                      Expanded(child: teamSection),
+                                    ],
+                                  );
+                          },
+                        ),
                       ),
 
                       // Project Links
@@ -177,35 +257,56 @@ class ProjectDetailScreen extends ConsumerWidget {
                           children: [
                             Row(
                               children: [
-                                Icon(
-                                  Icons.link,
-                                  color: Theme.of(context).primaryColor,
-                                  size: 24,
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context)
+                                        .primaryColor
+                                        .withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(
+                                    Icons.link,
+                                    color: Theme.of(context).primaryColor,
+                                    size: 24,
+                                  ),
                                 ),
-                                const SizedBox(width: 8),
+                                const SizedBox(width: 12),
                                 Text(
-                                  '배포 URL',
-                                  style: Theme.of(context).textTheme.titleLarge,
+                                  '프로젝트 링크',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 16),
                             Wrap(
-                              spacing: 16,
+                              spacing: 12,
+                              runSpacing: 12,
                               children: [
                                 if (project.demoUrl != null)
-                                  OutlinedButton.icon(
+                                  ElevatedButton.icon(
                                     onPressed: () async {
                                       final url = Uri.parse(project.demoUrl!);
                                       if (await canLaunchUrl(url)) {
                                         await launchUrl(url);
                                       }
                                     },
-                                    icon: const Icon(Icons.launch),
+                                    icon: const Icon(Icons.launch, size: 18),
                                     label: const Text('라이브 데모'),
-                                    style: OutlinedButton.styleFrom(
+                                    style: ElevatedButton.styleFrom(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 16, vertical: 12),
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                      foregroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
                                     ),
                                   ),
                                 if (project.githubUrl != null)
@@ -216,11 +317,17 @@ class ProjectDetailScreen extends ConsumerWidget {
                                         await launchUrl(url);
                                       }
                                     },
-                                    icon: const Icon(Icons.code),
+                                    icon: const Icon(Icons.code, size: 18),
                                     label: const Text('소스 코드'),
                                     style: OutlinedButton.styleFrom(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 16, vertical: 12),
+                                      side: BorderSide(
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
                                     ),
                                   ),
                               ],
@@ -312,15 +419,29 @@ class ProjectDetailScreen extends ConsumerWidget {
                         children: [
                           Row(
                             children: [
-                              Icon(
-                                Icons.code,
-                                color: Theme.of(context).primaryColor,
-                                size: 24,
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .primaryColor
+                                      .withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  Icons.code,
+                                  color: Theme.of(context).primaryColor,
+                                  size: 24,
+                                ),
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: 12),
                               Text(
                                 '사용 기술',
-                                style: Theme.of(context).textTheme.titleLarge,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                               ),
                             ],
                           ),
@@ -329,11 +450,32 @@ class ProjectDetailScreen extends ConsumerWidget {
                             spacing: 8,
                             runSpacing: 8,
                             children: project.technologies
-                                .map((tech) => Chip(
-                                      label: Text(tech),
-                                      backgroundColor: Theme.of(context)
-                                          .primaryColor
-                                          .withAlpha(25),
+                                .map((tech) => Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 6),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .primaryColor
+                                            .withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(
+                                          color: Theme.of(context)
+                                              .primaryColor
+                                              .withOpacity(0.2),
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        tech,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                      ),
                                     ))
                                 .toList(),
                           ),
@@ -346,15 +488,29 @@ class ProjectDetailScreen extends ConsumerWidget {
                         children: [
                           Row(
                             children: [
-                              Icon(
-                                Icons.star,
-                                color: Theme.of(context).primaryColor,
-                                size: 24,
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .primaryColor
+                                      .withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  Icons.star,
+                                  color: Theme.of(context).primaryColor,
+                                  size: 24,
+                                ),
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: 12),
                               Text(
                                 '주요 기능',
-                                style: Theme.of(context).textTheme.titleLarge,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                               ),
                             ],
                           ),
@@ -364,13 +520,25 @@ class ProjectDetailScreen extends ConsumerWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('• '),
+                                    Container(
+                                      width: 6,
+                                      height: 6,
+                                      margin: const EdgeInsets.only(
+                                          top: 8, right: 12),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).primaryColor,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
                                     Expanded(
                                       child: Text(
                                         feature,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyLarge,
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              height: 1.5,
+                                            ),
                                       ),
                                     ),
                                   ],

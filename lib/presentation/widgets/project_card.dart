@@ -81,21 +81,69 @@ class _ProjectCardState extends State<ProjectCard>
 
           showDialog(
             context: context,
+            barrierDismissible: true,
             builder: (BuildContext context) {
               return Dialog(
                 backgroundColor: Colors.transparent,
                 child: Container(
                   width: isMobile
                       ? MediaQuery.of(context).size.width * 0.95
-                      : MediaQuery.of(context).size.width * 0.7,
+                      : MediaQuery.of(context).size.width * 0.8,
                   height: isMobile
                       ? MediaQuery.of(context).size.height * 0.95
                       : MediaQuery.of(context).size.height * 0.9,
                   decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 30,
+                        spreadRadius: 5,
+                      ),
+                    ],
                   ),
-                  child: ProjectDetailScreen(projectId: widget.project.id),
+                  child: Column(
+                    children: [
+                      // 헤더 영역
+                      Container(
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: projectColor.withOpacity(0.1),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: Text(
+                                widget.project.title,
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  color: projectColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              icon: Icon(
+                                Icons.close,
+                                color: projectColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // 컨텐츠 영역
+                      Expanded(
+                        child:
+                            ProjectDetailScreen(projectId: widget.project.id),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
