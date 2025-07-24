@@ -78,7 +78,7 @@ class ProjectDetailScreen extends ConsumerWidget {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(16),
                             child: Image.asset(
-                              project.imageUrl!,
+                              'assets/${project.imageUrl!}',
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(

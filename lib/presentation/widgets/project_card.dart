@@ -205,8 +205,8 @@ class _ProjectCardState extends State<ProjectCard>
                                 topLeft: Radius.circular(16),
                                 topRight: Radius.circular(16),
                               ),
-                              child: Image.network(
-                                widget.project.imageUrl!,
+                              child: Image.asset(
+                                'assets/${widget.project.imageUrl!}',
                                 width: double.infinity,
                                 height: 160,
                                 fit: BoxFit.cover,
