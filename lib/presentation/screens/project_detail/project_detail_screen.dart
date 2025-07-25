@@ -26,259 +26,166 @@ class ProjectDetailScreen extends ConsumerWidget {
         final project = projects.firstWhere((p) => p.id == projectId);
 
         return Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          backgroundColor: Colors.grey[900],
           body: CustomScrollView(
             slivers: [
               // Content
               SliverPadding(
-                padding: const EdgeInsets.all(24.0),
-                sliver: SliverList.separated(
-                  itemBuilder: (context, index) {
-                    final section = [
-                      // Project Title
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.all(24),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    // Header with back button and project title
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: Row(
                         children: [
-                          Text(
-                            project.title,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).primaryColor,
-                                ),
+                          IconButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            icon: Icon(
+                              Icons.arrow_back_ios,
+                              color: Colors.grey[400],
+                              size: 20,
+                            ),
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.grey[850],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '프로젝트 상세 정보',
-                            style:
-                                Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge
-                                          ?.color
-                                          ?.withOpacity(0.7),
-                                    ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '프로젝트',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        color: Colors.grey[400],
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  project.title,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white,
+                                      ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
+                    ),
 
-                      // Project Image
-                      if (project.imageUrl != null)
-                        Container(
-                          height: 200,
-                          width: double.infinity,
-                          margin: const EdgeInsets.only(top: 16),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            color:
-                                Theme.of(context).primaryColor.withOpacity(0.1),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: Image.asset(
-                              'assets/${project.imageUrl!}',
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(16),
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        Theme.of(context)
-                                            .primaryColor
-                                            .withOpacity(0.1),
-                                        Theme.of(context)
-                                            .primaryColor
-                                            .withOpacity(0.05),
-                                      ],
-                                    ),
-                                  ),
-                                  child: Icon(
-                                    Icons.code,
-                                    size: 64,
-                                    color: Theme.of(context)
-                                        .primaryColor
-                                        .withOpacity(0.5),
-                                  ),
-                                );
-                              },
+                    const SizedBox(height: 24),
+
+                    // Project Image
+                    if (project.imageUrl != null) ...[
+                      Container(
+                        height: 200,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
                             ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.asset(
+                            'assets/${project.imageUrl!}',
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  color: Colors.grey[800],
+                                ),
+                                child: Icon(
+                                  Icons.image,
+                                  size: 64,
+                                  color: Colors.grey[600],
+                                ),
+                              );
+                            },
                           ),
                         ),
+                      ),
+                      const SizedBox(height: 32),
+                    ],
 
-                      // Period & Team
+                    // Project Info Cards
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildInfoCard(
+                            context,
+                            Icons.calendar_today,
+                            '프로젝트 기간',
+                            project.period,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _buildInfoCard(
+                            context,
+                            Icons.people,
+                            '팀 구성',
+                            project.teamSize,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Project Links
+                    if (project.demoUrl != null || project.githubUrl != null)
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color:
-                              Theme.of(context).primaryColor.withOpacity(0.05),
+                          color: Colors.grey[850],
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color:
-                                Theme.of(context).primaryColor.withOpacity(0.1),
-                            width: 1,
-                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
                         ),
-                        child: Builder(
-                          builder: (context) {
-                            final width = MediaQuery.of(context).size.width;
-                            final isMobile = width <= 800;
-
-                            final periodSection = Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                        .primaryColor
-                                        .withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(
-                                    Icons.calendar_today,
-                                    color: Theme.of(context).primaryColor,
-                                    size: 20,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '프로젝트 기간',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall
-                                                ?.color
-                                                ?.withOpacity(0.7),
-                                          ),
-                                    ),
-                                    Text(
-                                      project.period,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            );
-
-                            final teamSection = Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                        .primaryColor
-                                        .withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(
-                                    Icons.people,
-                                    color: Theme.of(context).primaryColor,
-                                    size: 20,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '팀 구성',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall
-                                                ?.color
-                                                ?.withOpacity(0.7),
-                                          ),
-                                    ),
-                                    Text(
-                                      project.teamSize,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            );
-
-                            return isMobile
-                                ? Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      periodSection,
-                                      const SizedBox(height: 16),
-                                      teamSection,
-                                    ],
-                                  )
-                                : Row(
-                                    children: [
-                                      Expanded(child: periodSection),
-                                      Container(
-                                        height: 40,
-                                        width: 1,
-                                        color: Theme.of(context)
-                                            .primaryColor
-                                            .withOpacity(0.2),
-                                      ),
-                                      const SizedBox(width: 24),
-                                      Expanded(child: teamSection),
-                                    ],
-                                  );
-                          },
-                        ),
-                      ),
-
-                      // Project Links
-                      if (project.demoUrl != null || project.githubUrl != null)
-                        Column(
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               children: [
-                                Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                        .primaryColor
-                                        .withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(
-                                    Icons.link,
-                                    color: Theme.of(context).primaryColor,
-                                    size: 24,
-                                  ),
+                                Icon(
+                                  Icons.link,
+                                  color: Theme.of(context).primaryColor,
+                                  size: 20,
                                 ),
-                                const SizedBox(width: 12),
+                                const SizedBox(width: 8),
                                 Text(
                                   '프로젝트 링크',
                                   style: Theme.of(context)
                                       .textTheme
-                                      .titleLarge
+                                      .titleMedium
                                       ?.copyWith(
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
                                       ),
                                 ),
                               ],
@@ -289,539 +196,551 @@ class ProjectDetailScreen extends ConsumerWidget {
                               runSpacing: 12,
                               children: [
                                 if (project.demoUrl != null)
-                                  ElevatedButton.icon(
-                                    onPressed: () async {
-                                      final url = Uri.parse(project.demoUrl!);
-                                      if (await canLaunchUrl(url)) {
-                                        await launchUrl(url);
-                                      }
-                                    },
-                                    icon: const Icon(Icons.launch, size: 18),
-                                    label: const Text('라이브 데모'),
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12),
-                                      backgroundColor:
-                                          Theme.of(context).primaryColor,
-                                      foregroundColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
+                                  _buildLinkButton(
+                                    context,
+                                    '라이브 데모',
+                                    Icons.launch,
+                                    project.demoUrl!,
+                                    isPrimary: true,
                                   ),
                                 if (project.githubUrl != null)
-                                  OutlinedButton.icon(
-                                    onPressed: () async {
-                                      final url = Uri.parse(project.githubUrl!);
-                                      if (await canLaunchUrl(url)) {
-                                        await launchUrl(url);
-                                      }
-                                    },
-                                    icon: const Icon(Icons.code, size: 18),
-                                    label: const Text('소스 코드'),
-                                    style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12),
-                                      side: BorderSide(
-                                          color:
-                                              Theme.of(context).primaryColor),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
+                                  _buildLinkButton(
+                                    context,
+                                    '소스 코드',
+                                    Icons.code,
+                                    project.githubUrl!,
+                                    isPrimary: false,
                                   ),
                               ],
                             ),
                           ],
                         ),
-
-                      // Summary
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.description,
-                                color: Theme.of(context).primaryColor,
-                                size: 24,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '프로젝트 요약',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            project.summary,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ],
                       ),
 
-                      // Background
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.lightbulb,
-                                color: Theme.of(context).primaryColor,
-                                size: 24,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '개발 배경',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            project.background,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ],
-                      ),
+                    const SizedBox(height: 24),
 
-                      // Meaning
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.insights,
-                                color: Theme.of(context).primaryColor,
-                                size: 24,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '배운 점',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            project.meaning,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ],
-                      ),
+                    // Summary
+                    _buildContentSection(
+                      context,
+                      '프로젝트 요약',
+                      Icons.description,
+                      project.summary,
+                    ),
 
-                      // Technologies
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .primaryColor
-                                      .withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Icon(
-                                  Icons.code,
-                                  color: Theme.of(context).primaryColor,
-                                  size: 24,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                '사용 기술',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: project.technologies
-                                .map((tech) => Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 6),
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .primaryColor
-                                            .withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(16),
-                                        border: Border.all(
-                                          color: Theme.of(context)
-                                              .primaryColor
-                                              .withOpacity(0.2),
-                                          width: 1,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        tech,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.copyWith(
-                                              color: Theme.of(context)
-                                                  .primaryColor,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                      ),
-                                    ))
-                                .toList(),
-                          ),
-                        ],
-                      ),
+                    const SizedBox(height: 24),
 
-                      // Key Features
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .primaryColor
-                                      .withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Icon(
-                                  Icons.star,
-                                  color: Theme.of(context).primaryColor,
-                                  size: 24,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                '주요 기능',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          ...project.keyFeatures.map((feature) => Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: 6,
-                                      height: 6,
-                                      margin: const EdgeInsets.only(
-                                          top: 8, right: 12),
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context).primaryColor,
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        feature,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.copyWith(
-                                              height: 1.5,
-                                            ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )),
-                        ],
-                      ),
+                    // Background
+                    _buildContentSection(
+                      context,
+                      '개발 배경',
+                      Icons.lightbulb,
+                      project.background,
+                    ),
 
-                      // Challenges
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.engineering,
-                                color: Theme.of(context).primaryColor,
-                                size: 24,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '도전 과제',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          ...project.challenges.map((challenge) => Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text('• '),
-                                    Expanded(
-                                      child: Text(
-                                        challenge,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )),
-                        ],
-                      ),
+                    const SizedBox(height: 24),
 
-                      // Responsibilities 섹션
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.assignment_ind,
-                                color: Theme.of(context).primaryColor,
-                                size: 24,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '담당 업무',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          ...project.responsibilities
-                              .map((responsibility) => Padding(
-                                    padding: const EdgeInsets.only(bottom: 12),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text('• '),
-                                        Expanded(
-                                          child: Text(
-                                            responsibility,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )),
-                        ],
-                      ),
+                    // Meaning
+                    _buildContentSection(
+                      context,
+                      '배운 점',
+                      Icons.insights,
+                      project.meaning,
+                    ),
 
-                      // Troubleshooting
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.bug_report,
-                                color: Theme.of(context).primaryColor,
-                                size: 24,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '문제 해결',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          ...project.troubleshooting.map((item) => Padding(
-                                padding: const EdgeInsets.only(bottom: 24),
-                                child: Card(
-                                  elevation: 2,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    side: BorderSide(
-                                      color: Theme.of(context)
-                                          .primaryColor
-                                          .withAlpha(51), // 0.2 * 255 = 51
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // 문제
-                                        Text(
-                                          item.issue,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleMedium
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                                color: Theme.of(context)
-                                                    .primaryColor,
-                                              ),
-                                        ),
-                                        const SizedBox(height: 12),
+                    const SizedBox(height: 24),
 
-                                        // 상황
-                                        Text(
-                                          '상황',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text('• '),
-                                            Expanded(
-                                              child: Text(
-                                                item.context,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 12),
+                    // Technologies
+                    _buildTechnologiesSection(context, project),
 
-                                        // 해결
-                                        Text(
-                                          '해결',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text('• '),
-                                            Expanded(
-                                              child: Text(
-                                                item.solution,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 12),
+                    const SizedBox(height: 24),
 
-                                        // 배운 점
-                                        Text(
-                                          '배운 점',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                                color: Theme.of(context)
-                                                    .primaryColor
-                                                    .withAlpha(204),
-                                              ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text('• '),
-                                            Expanded(
-                                              child: Text(
-                                                item.learning,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              )),
-                        ],
-                      ),
+                    // Key Features
+                    _buildFeaturesSection(context, project),
 
-                      // Improvements
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.trending_up,
-                                color: Theme.of(context).primaryColor,
-                                size: 24,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '향후 개선 계획',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          ...project.improvements.map((improvement) => Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text('• '),
-                                    Expanded(
-                                      child: Text(
-                                        improvement,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )),
-                        ],
-                      ),
-                    ];
-                    return section[index];
-                  },
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 48),
-                  itemCount: 10, // 섹션의 총 개수
+                    const SizedBox(height: 24),
+
+                    // Challenges
+                    _buildListSection(
+                      context,
+                      '도전 과제',
+                      Icons.engineering,
+                      project.challenges,
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Responsibilities
+                    _buildListSection(
+                      context,
+                      '담당 업무',
+                      Icons.assignment_ind,
+                      project.responsibilities,
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Troubleshooting
+                    _buildTroubleshootingSection(context, project),
+
+                    const SizedBox(height: 24),
+
+                    // Improvements
+                    _buildListSection(
+                      context,
+                      '향후 개선 계획',
+                      Icons.trending_up,
+                      project.improvements,
+                    ),
+
+                    const SizedBox(height: 40),
+                  ]),
                 ),
               ),
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildInfoCard(
+      BuildContext context, IconData icon, String title, String value) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.grey[850],
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            icon,
+            color: Theme.of(context).primaryColor,
+            size: 24,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.grey[400],
+                  fontWeight: FontWeight.w500,
+                ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContentSection(
+      BuildContext context, String title, IconData icon, String content) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.grey[850],
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                icon,
+                color: Theme.of(context).primaryColor,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            content,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  height: 1.6,
+                  color: Colors.grey[300],
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTechnologiesSection(BuildContext context, project) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.grey[850],
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.code,
+                color: Theme.of(context).primaryColor,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '사용 기술',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: project.technologies
+                .map<Widget>((tech) => Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color:
+                              Theme.of(context).primaryColor.withOpacity(0.4),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        tech,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                    ))
+                .toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeaturesSection(BuildContext context, project) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.grey[850],
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.star,
+                color: Theme.of(context).primaryColor,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '주요 기능',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...project.keyFeatures.map<Widget>((feature) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 6,
+                      margin: const EdgeInsets.only(top: 8, right: 12),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        feature,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              height: 1.5,
+                              color: Colors.grey[300],
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListSection(
+      BuildContext context, String title, IconData icon, List<String> items) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.grey[850],
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                icon,
+                color: Theme.of(context).primaryColor,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...items.map<Widget>((item) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('• ', style: TextStyle(color: Colors.grey)),
+                    Expanded(
+                      child: Text(
+                        item,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              height: 1.5,
+                              color: Colors.grey[300],
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTroubleshootingSection(BuildContext context, project) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.grey[850],
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.bug_report,
+                color: Theme.of(context).primaryColor,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '문제 해결',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...project.troubleshooting.map<Widget>((item) => Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[800],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.grey.withOpacity(0.1),
+                      width: 1,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.issue,
+                          style:
+                              Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                        ),
+                        const SizedBox(height: 8),
+                        _buildTroubleshootingItem(context, '상황', item.context),
+                        const SizedBox(height: 8),
+                        _buildTroubleshootingItem(context, '해결', item.solution),
+                        const SizedBox(height: 8),
+                        _buildTroubleshootingItem(
+                            context, '배운 점', item.learning,
+                            isLearning: true),
+                      ],
+                    ),
+                  ),
+                ),
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTroubleshootingItem(
+      BuildContext context, String label, String content,
+      {bool isLearning = false}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: isLearning
+                    ? Theme.of(context).primaryColor
+                    : Colors.grey[400],
+              ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          content,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                height: 1.4,
+                color: Colors.grey[300],
+              ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLinkButton(
+      BuildContext context, String label, IconData icon, String url,
+      {bool isPrimary = false}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isPrimary ? Theme.of(context).primaryColor : Colors.transparent,
+        borderRadius: BorderRadius.circular(8),
+        border: isPrimary
+            ? null
+            : Border.all(
+                color: Theme.of(context).primaryColor,
+                width: 1,
+              ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () async {
+            final uri = Uri.parse(url);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri);
+            }
+          },
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: 16,
+                  color:
+                      isPrimary ? Colors.white : Theme.of(context).primaryColor,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  label,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: isPrimary
+                            ? Colors.white
+                            : Theme.of(context).primaryColor,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
