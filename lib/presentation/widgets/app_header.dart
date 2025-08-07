@@ -13,10 +13,11 @@ class AppHeader extends ConsumerWidget {
     final scrollProgress = ref.watch(scrollProvider);
     final theme = Theme.of(context);
     final isScrolled = scrollProgress > 0.05;
+    final isMobile = MediaQuery.of(context).size.width <= 800;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       decoration: BoxDecoration(
         color: isScrolled
             ? theme.scaffoldBackgroundColor.withOpacity(0.85)
@@ -38,28 +39,39 @@ class AppHeader extends ConsumerWidget {
             style: theme.textTheme.titleLarge
                 ?.copyWith(fontWeight: FontWeight.bold),
           ),
-          if (MediaQuery.of(context).size.width > 800)
-            Row(
-              children: [
-                ...sectionKeys.keys.map((title) {
-                  return _HeaderButton(
-                    title: title,
-                    onPressed: () {
-                      final key = sectionKeys[title];
-                      if (key?.currentContext != null) {
-                        Scrollable.ensureVisible(
-                          key!.currentContext!,
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.easeInOut,
-                        );
-                      }
-                    },
-                  );
-                }),
-                const SizedBox(width: 24),
-                const ThemeToggleButton(),
-              ],
-            ),
+          isMobile
+              ? Row(
+                  children: [
+                    const ThemeToggleButton(),
+                    IconButton(
+                      icon: const Icon(Icons.menu),
+                      onPressed: () {
+                        Scaffold.of(context).openEndDrawer();
+                      },
+                    ),
+                  ],
+                )
+              : Row(
+                  children: [
+                    ...sectionKeys.keys.map((title) {
+                      return _HeaderButton(
+                        title: title,
+                        onPressed: () {
+                          final key = sectionKeys[title];
+                          if (key?.currentContext != null) {
+                            Scrollable.ensureVisible(
+                              key!.currentContext!,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                            );
+                          }
+                        },
+                      );
+                    }),
+                    const SizedBox(width: 24),
+                    const ThemeToggleButton(),
+                  ],
+                ),
         ],
       ),
     );

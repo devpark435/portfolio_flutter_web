@@ -53,6 +53,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final scrollProgress = ref.watch(scrollProvider);
 
     return Scaffold(
+      endDrawer: MediaQuery.of(context).size.width <= 800
+          ? _buildMobileDrawer(context)
+          : null,
       body: MouseRegion(
         cursor: SystemMouseCursors.none,
         onHover: (event) {
@@ -63,7 +66,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             CustomScrollView(
               controller: _scrollController,
               slivers: [
-                const SliverToBoxAdapter(child: HeroSection()),
+                SliverToBoxAdapter(
+                    child: HeroSection(sectionKeys: _sectionKeys)),
                 SliverToBoxAdapter(
                   key: _sectionKeys['Profile'],
                   child: Container(
@@ -128,6 +132,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             const CustomCursor(),
           ],
         ),
+      ),
+    );
+  }
+
+  Drawer _buildMobileDrawer(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        children: [
+          DrawerHeader(
+            child: Text(
+              'Navigation',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall
+                  ?.copyWith(color: Theme.of(context).colorScheme.primary),
+            ),
+          ),
+          ..._sectionKeys.keys.map((title) {
+            return ListTile(
+              title: Text(title),
+              onTap: () {
+                final key = _sectionKeys[title];
+                if (key?.currentContext != null) {
+                  Scrollable.ensureVisible(
+                    key!.currentContext!,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
+                  );
+                }
+                Navigator.of(context).pop(); // Close the drawer
+              },
+            );
+          }),
+        ],
       ),
     );
   }

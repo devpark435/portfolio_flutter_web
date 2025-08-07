@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:simple_animations/simple_animations.dart';
 
+import '../../../widgets/contact_button.dart';
+import '../../../widgets/section_wrapper.dart';
+
 class HeroSection extends StatelessWidget {
-  const HeroSection({super.key});
+  final Map<String, GlobalKey> sectionKeys;
+  const HeroSection({super.key, required this.sectionKeys});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height,
-      child: const Stack(
+      child: Stack(
         children: [
-          PlasmaBackground(),
-          HeroContent(),
+          const PlasmaBackground(),
+          HeroContent(sectionKeys: sectionKeys),
         ],
       ),
     );
@@ -48,7 +53,8 @@ class PlasmaBackground extends StatelessWidget {
 }
 
 class HeroContent extends StatefulWidget {
-  const HeroContent({super.key});
+  final Map<String, GlobalKey> sectionKeys;
+  const HeroContent({super.key, required this.sectionKeys});
 
   @override
   State<HeroContent> createState() => _HeroContentState();
@@ -149,73 +155,30 @@ class _HeroContentState extends State<HeroContent> {
           AnimatedOpacity(
             duration: const Duration(milliseconds: 800),
             opacity: _showArrow ? 1.0 : 0.0,
-            child: const _BouncingArrow(),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                final key = widget.sectionKeys['Profile'];
+                if (key?.currentContext != null) {
+                  Scrollable.ensureVisible(
+                    key!.currentContext!,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
+                  );
+                }
+              },
+              icon: const Icon(Icons.arrow_downward),
+              label: const Text('더 알아보기'),
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                backgroundColor: Colors.transparent,
+                shape: const StadiumBorder(),
+              ),
+            ),
           ),
           const SizedBox(height: 40),
         ],
       ),
-    );
-  }
-}
-
-class _BouncingArrow extends StatefulWidget {
-  const _BouncingArrow();
-
-  @override
-  _BouncingArrowState createState() => _BouncingArrowState();
-}
-
-class _BouncingArrowState extends State<_BouncingArrow>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat(reverse: true);
-
-    _animation = Tween<double>(begin: 0.0, end: 10.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(0, _animation.value),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Scroll Down',
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Icon(
-                Icons.keyboard_arrow_down,
-                color: Theme.of(context).primaryColor,
-                size: 36,
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }
