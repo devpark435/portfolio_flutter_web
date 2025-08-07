@@ -53,23 +53,20 @@ class SkillsSection extends ConsumerWidget {
                 spacing: spacing, // 가로 간격
                 runSpacing: 32, // 세로 간격 증가
                 alignment: WrapAlignment.start,
-                children: skills.map((skill) {
-                  return SizedBox(
-                    width: cardWidth,
-                    child: SkillCard(skill: skill),
-                  );
-                }).toList(),
-              )
-                  .animate()
-                  .moveY(
-                    begin: 50,
-                    duration: 500.ms,
-                    curve: Curves.easeOut,
-                  )
-                  .fadeIn(
-                    duration: 500.ms,
-                    curve: Curves.easeOut,
-                  );
+                children: skills
+                    .map((skill) => SizedBox(
+                          width: cardWidth,
+                          child: SkillCard(skill: skill),
+                        ))
+                    .toList()
+                    .animate(interval: 100.ms)
+                    .fadeIn(duration: 500.ms, delay: 200.ms)
+                    .moveY(
+                      begin: 30,
+                      duration: 500.ms,
+                      curve: Curves.easeOut,
+                    ),
+              );
             },
           ),
         ],

@@ -168,20 +168,20 @@ class ProjectsSection extends ConsumerWidget {
               spacing: spacing,
               runSpacing: 32, // 세로 간격 증가
               alignment: WrapAlignment.center,
-              children: projects.map((project) {
-                return SizedBox(
-                  width: cardWidth,
-                  child: ProjectCard(project: project),
-                );
-              }).toList(),
-            )
-                .animate()
-                .slideY(
-                  begin: 0.1,
-                  duration: 500.ms,
-                  curve: Curves.easeOut,
-                )
-                .fadeIn(),
+              children: projects
+                  .map((project) => SizedBox(
+                        width: cardWidth,
+                        child: ProjectCard(project: project),
+                      ))
+                  .toList()
+                  .animate(interval: 100.ms)
+                  .fadeIn(duration: 500.ms, delay: 200.ms)
+                  .moveY(
+                    begin: 30,
+                    duration: 500.ms,
+                    curve: Curves.easeOut,
+                  ),
+            ),
           ],
         );
       },

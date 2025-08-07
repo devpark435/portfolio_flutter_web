@@ -8,21 +8,48 @@ import 'package:portfolio_web/presentation/screens/home/sections/hero_section.da
 import 'package:portfolio_web/presentation/screens/home/sections/profile_section.dart';
 import 'package:portfolio_web/presentation/screens/home/sections/project_section.dart';
 import 'package:portfolio_web/presentation/screens/home/sections/skills_section.dart';
+import 'package:portfolio_web/presentation/widgets/app_header.dart';
 import 'package:portfolio_web/presentation/widgets/custom_cursor.dart';
 import 'package:portfolio_web/presentation/widgets/theme_toggle_button.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final scrollController = ref.watch(scrollProvider.notifier);
-    final scrollNotifier = ScrollController();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
 
-    scrollNotifier.addListener(() {
-      scrollController.updateScroll(scrollNotifier.position.pixels /
-          scrollNotifier.position.maxScrollExtent);
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final Map<String, GlobalKey> _sectionKeys = {
+    'Profile': GlobalKey(),
+    'Experience': GlobalKey(),
+    'Awards': GlobalKey(),
+    'Projects': GlobalKey(),
+    'Skills': GlobalKey(),
+    'Contact': GlobalKey(),
+  };
+
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(() {
+      final scrollNotifier = ref.read(scrollProvider.notifier);
+      scrollNotifier.updateScroll(_scrollController.position.pixels /
+          _scrollController.position.maxScrollExtent);
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final scrollProgress = ref.watch(scrollProvider);
 
     return Scaffold(
@@ -34,40 +61,46 @@ class HomeScreen extends ConsumerWidget {
         child: Stack(
           children: [
             CustomScrollView(
-              controller: scrollNotifier,
+              controller: _scrollController,
               slivers: [
                 const SliverToBoxAdapter(child: HeroSection()),
                 SliverToBoxAdapter(
+                  key: _sectionKeys['Profile'],
                   child: Container(
                     color: Theme.of(context).colorScheme.surface,
                     child: const ProfileSection(),
                   ),
                 ),
                 SliverToBoxAdapter(
+                  key: _sectionKeys['Experience'],
                   child: Container(
                     color: Theme.of(context).colorScheme.surface.withAlpha(50),
                     child: const ExperienceSection(),
                   ),
                 ),
                 SliverToBoxAdapter(
+                  key: _sectionKeys['Awards'],
                   child: Container(
                     color: Theme.of(context).colorScheme.surface,
                     child: const AwardsSection(),
                   ),
                 ),
                 SliverToBoxAdapter(
+                  key: _sectionKeys['Projects'],
                   child: Container(
                     color: Theme.of(context).colorScheme.surface.withAlpha(50),
                     child: const ProjectsSection(),
                   ),
                 ),
                 SliverToBoxAdapter(
+                  key: _sectionKeys['Skills'],
                   child: Container(
                     color: Theme.of(context).colorScheme.surface,
                     child: const SkillsSection(),
                   ),
                 ),
                 SliverToBoxAdapter(
+                  key: _sectionKeys['Contact'],
                   child: Container(
                     color: Theme.of(context).colorScheme.surface.withAlpha(50),
                     child: const ContactSection(),
@@ -75,7 +108,13 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            if (scrollProgress > 0)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: AppHeader(sectionKeys: _sectionKeys),
+            ),
+            if (scrollProgress > 0 && scrollProgress < 1)
               Positioned(
                 top: 0,
                 left: 0,
@@ -86,11 +125,6 @@ class HomeScreen extends ConsumerWidget {
                   minHeight: 2,
                 ),
               ),
-            const Positioned(
-              top: 20,
-              right: 20,
-              child: ThemeToggleButton(),
-            ),
             const CustomCursor(),
           ],
         ),
