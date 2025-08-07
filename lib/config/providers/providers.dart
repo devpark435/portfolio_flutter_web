@@ -43,3 +43,35 @@ final projectsProvider = FutureProvider<List<Project>>((ref) async {
   final repository = ref.watch(projectRepositoryProvider);
   return repository.getProjects();
 });
+
+// Cursor Provider
+final cursorProvider =
+    StateNotifierProvider<CursorNotifier, CursorState>((ref) {
+  return CursorNotifier();
+});
+
+class CursorState {
+  final Offset position;
+  final bool isHovering;
+
+  CursorState({this.position = Offset.zero, this.isHovering = false});
+
+  CursorState copyWith({Offset? position, bool? isHovering}) {
+    return CursorState(
+      position: position ?? this.position,
+      isHovering: isHovering ?? this.isHovering,
+    );
+  }
+}
+
+class CursorNotifier extends StateNotifier<CursorState> {
+  CursorNotifier() : super(CursorState());
+
+  void updatePosition(Offset newPosition) {
+    state = state.copyWith(position: newPosition);
+  }
+
+  void setHovering(bool isHovering) {
+    state = state.copyWith(isHovering: isHovering);
+  }
+}

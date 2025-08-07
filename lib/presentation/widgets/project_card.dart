@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/project.dart';
 import '../screens/project_detail/project_detail_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:portfolio_web/config/providers/providers.dart';
 
 class ProjectCard extends StatefulWidget {
   final Project project;
@@ -23,52 +25,62 @@ class _ProjectCardState extends State<ProjectCard> {
     final theme = Theme.of(context);
     final projectColor = _getProjectColor();
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: () => _showProjectDetailDialog(context, theme, projectColor),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: _isHovered
-                  ? projectColor.withOpacity(0.5)
-                  : Colors.grey.withOpacity(0.2),
-              width: 1,
+    return Consumer(
+      builder: (context, ref, child) {
+        return MouseRegion(
+          onEnter: (_) {
+            setState(() => _isHovered = true);
+            ref.read(cursorProvider.notifier).setHovering(true);
+          },
+          onExit: (_) {
+            setState(() => _isHovered = false);
+            ref.read(cursorProvider.notifier).setHovering(false);
+          },
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            onTap: () => _showProjectDetailDialog(context, theme, projectColor),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: _isHovered
+                      ? projectColor.withOpacity(0.5)
+                      : Colors.grey.withOpacity(0.2),
+                  width: 1,
+                ),
+                boxShadow: _isHovered
+                    ? [
+                        BoxShadow(
+                          color: projectColor.withOpacity(0.2),
+                          blurRadius: 20,
+                          spreadRadius: 4,
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                        ),
+                      ]
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildImageSection(projectColor),
+                  _buildInfoSection(theme, projectColor),
+                ],
+              ),
             ),
-            boxShadow: _isHovered
-                ? [
-                    BoxShadow(
-                      color: projectColor.withOpacity(0.2),
-                      blurRadius: 20,
-                      spreadRadius: 4,
-                    ),
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                    ),
-                  ]
-                : [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildImageSection(projectColor),
-              _buildInfoSection(theme, projectColor),
-            ],
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 
