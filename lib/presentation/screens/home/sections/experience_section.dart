@@ -21,7 +21,7 @@ class ExperienceSection extends StatelessWidget {
             ),
         child: Column(
           children: [
-            const SectionTitle(title: '활동 경험'),
+            const SectionTitle(title: '경력 & 활동'),
             const SizedBox(height: 48),
             Column(
               children: experiences

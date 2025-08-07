@@ -40,28 +40,44 @@ class _ExperienceCardState extends State<ExperienceCard>
   }
 
   Color _getExperienceColor() {
-    // 활동 유형에 따른 색상 지정
-    if (widget.experience.title.contains('GDSC')) {
-      return const Color(0xFF4285F4); // Google Blue
-    } else if (widget.experience.title.contains('스파르타')) {
-      return const Color(0xFF02569B); // Flutter Blue
-    } else if (widget.experience.title.contains('대학교')) {
-      return const Color(0xFF6C63FF); // Purple
-    } else {
-      return const Color(0xFFF05032); // Orange
+    // 3가지 타입으로 구분
+    switch (widget.experience.type) {
+      case 'work':
+        return const Color(0xFF4285F4); // 회사 경력: 파란색
+      case 'freelance':
+        return const Color(0xFF34A853); // 프리랜서: 초록색
+      case 'activity':
+        return const Color(0xFF6C63FF); // 활동 경험: 보라색
+      default:
+        return const Color(0xFF4285F4); // 기본값: 파란색
+    }
+  }
+
+  String _getExperienceType() {
+    // 3가지 타입으로 구분
+    switch (widget.experience.type) {
+      case 'work':
+        return '회사 경력';
+      case 'freelance':
+        return '프리랜서';
+      case 'activity':
+        return '활동 경험';
+      default:
+        return '경력';
     }
   }
 
   IconData _getExperienceIcon() {
-    // 활동 유형에 따른 아이콘 지정
-    if (widget.experience.title.contains('GDSC')) {
-      return Icons.groups;
-    } else if (widget.experience.title.contains('스파르타')) {
-      return Icons.school;
-    } else if (widget.experience.title.contains('대학교')) {
-      return Icons.school;
-    } else {
-      return Icons.work;
+    // 3가지 타입으로 구분
+    switch (widget.experience.type) {
+      case 'work':
+        return Icons.work; // 회사 경력: 일 아이콘
+      case 'freelance':
+        return Icons.computer; // 프리랜서: 컴퓨터 아이콘
+      case 'activity':
+        return Icons.groups; // 활동 경험: 그룹 아이콘
+      default:
+        return Icons.work; // 기본값: 일 아이콘
     }
   }
 
@@ -159,6 +175,27 @@ class _ExperienceCardState extends State<ExperienceCard>
                                 ),
                               ),
                             ],
+                          ),
+                        ),
+                        // 경력 타입 배지 추가
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: categoryColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: categoryColor.withOpacity(0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: Text(
+                            _getExperienceType(),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: categoryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10,
+                            ),
                           ),
                         ),
                       ],
