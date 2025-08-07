@@ -32,7 +32,7 @@ jobs:
       
       - name: Build
         run: |
-          flutter build web --release --web-renderer canvaskit --base-href /portfolio_flutter_web/
+          flutter build web --release --web-renderer canvaskit --base-href "/portfolio_flutter_web/"
       
       # 빌드 후 에셋 복사 확인 단계 추가
       - name: Copy assets to build output if needed
