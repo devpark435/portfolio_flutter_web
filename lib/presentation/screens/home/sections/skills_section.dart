@@ -4,6 +4,7 @@ import '../../../../data/skills.dart';
 import '../../../widgets/section_title.dart';
 import '../../../widgets/section_wrapper.dart';
 import '../../../widgets/skill_card.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class SkillsSection extends ConsumerWidget {
   const SkillsSection({super.key});
@@ -58,7 +59,17 @@ class SkillsSection extends ConsumerWidget {
                     child: SkillCard(skill: skill),
                   );
                 }).toList(),
-              );
+              )
+                  .animate()
+                  .moveY(
+                    begin: 50,
+                    duration: 500.ms,
+                    curve: Curves.easeOut,
+                  )
+                  .fadeIn(
+                    duration: 500.ms,
+                    curve: Curves.easeOut,
+                  );
             },
           ),
         ],

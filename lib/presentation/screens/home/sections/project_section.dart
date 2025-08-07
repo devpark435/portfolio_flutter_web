@@ -6,6 +6,7 @@ import 'package:portfolio_web/presentation/widgets/section_title.dart';
 import 'package:portfolio_web/presentation/widgets/section_wrapper.dart';
 
 import '../../../widgets/contact_button.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class ProjectsSection extends ConsumerWidget {
   const ProjectsSection({super.key});
@@ -173,7 +174,14 @@ class ProjectsSection extends ConsumerWidget {
                   child: ProjectCard(project: project),
                 );
               }).toList(),
-            ),
+            )
+                .animate()
+                .slideY(
+                  begin: 0.1,
+                  duration: 500.ms,
+                  curve: Curves.easeOut,
+                )
+                .fadeIn(),
           ],
         );
       },
