@@ -3,7 +3,7 @@ import '../domain/models/skill.dart';
 const List<Skill> skills = [
   Skill(
     title: 'Flutter Development',
-    skills: ['Flutter/Dart', 'Riverpod', 'Cubit', 'GetX', 'Flutter Hooks'],
+    skills: ['Flutter/Dart', 'Riverpod', 'Bloc', 'Provider'],
     description: '크로스 플랫폼 모바일 앱 개발',
   ),
   Skill(
