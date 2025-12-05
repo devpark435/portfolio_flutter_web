@@ -4,7 +4,7 @@ final List<Experience> experiences = [
   const Experience(
     title: '주식회사 이프립',
     role: 'Flutter 개발자',
-    period: '2025.05 - 현재',
+    period: '2025.05 - 2025.08.31',
     description: [
       'AI 진로/진학 컨설팅 서비스 개발 및 유지보수 담당',
       '신규 기능 기획 및 개발 참여',

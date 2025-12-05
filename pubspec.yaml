@@ -42,7 +42,7 @@ dependencies:
   url_launcher: ^6.3.2
   animated_text_kit: ^4.2.3
   font_awesome_flutter: ^10.9.0
-  simple_animations: ^5.2.0
+  simple_animations: ^5.1.0
   flutter_animate: ^4.5.2
   timeline_tile: ^2.0.0
 
