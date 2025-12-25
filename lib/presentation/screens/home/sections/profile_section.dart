@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:portfolio_web/config/providers/providers.dart';
-import 'package:portfolio_web/domain/services/markdown_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../data/profile_info.dart';
 import '../../../widgets/section_title.dart';
@@ -150,17 +148,11 @@ class ProfileSection extends ConsumerWidget {
         }),
         const Spacer(),
         ElevatedButton.icon(
-          onPressed: () async {
-            final projectsData = await ref.read(projectsProvider.future);
-            final markdownContent = MarkdownService()
-                .generatePortfolioMarkdown(projects: projectsData);
-
-            final blob = html.Blob([markdownContent], 'text/markdown');
-            final url = html.Url.createObjectUrlFromBlob(blob);
-            final anchor = html.AnchorElement(href: url)
-              ..setAttribute('download', 'portfolio_parkhyunryeol.md')
+          onPressed: () {
+            // PDF 파일 다운로드 (웹 전용)
+            html.AnchorElement(href: 'assets/assets/docs/portfolio.pdf')
+              ..setAttribute('download', 'portfolio_parkhyunryeol.pdf')
               ..click();
-            html.Url.revokeObjectUrl(url);
           },
           icon: const Icon(Icons.download),
           label: const Text('이력서 다운로드'),
