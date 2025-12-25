@@ -29,22 +29,34 @@ class ExperienceSection extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 64),
-          ..._buildTimeline(context),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              // 800px 미만이면 모바일 모드 (왼쪽 정렬)
+              final isMobile = constraints.maxWidth < 800;
+              return Column(
+                children: _buildTimeline(context, isMobile),
+              );
+            },
+          ),
         ],
       ),
     );
   }
 
-  List<Widget> _buildTimeline(BuildContext context) {
-    List<Widget> timelineItems = [];
+  List<Widget> _buildTimeline(BuildContext context, bool isMobile) {
+    final List<Widget> timelineItems = [];
+
     for (int i = 0; i < experiences.length; i++) {
       final experience = experiences[i];
-      final bool isLeft = i.isEven;
+      // 모바일이면 무조건 오른쪽(endChild)에 배치, 데스크탑이면 지그재그
+      final bool isLeft = isMobile ? false : i.isEven;
 
       timelineItems.add(
         TimelineTile(
           axis: TimelineAxis.vertical,
-          alignment: TimelineAlign.center,
+          // 모바일: 왼쪽 정렬 (좌측 0.1 지점), 데스크탑: 중앙 정렬
+          alignment: isMobile ? TimelineAlign.manual : TimelineAlign.center,
+          lineXY: isMobile ? 0.05 : 0.5,
           isFirst: i == 0,
           isLast: i == experiences.length - 1,
           beforeLineStyle: LineStyle(
@@ -57,12 +69,21 @@ class ExperienceSection extends StatelessWidget {
             indicator: _buildIndicator(context, experience),
             padding: const EdgeInsets.all(8),
           ),
-          startChild:
-              isLeft ? _ExperienceTimelineCard(experience: experience) : null,
-          endChild:
-              !isLeft ? _ExperienceTimelineCard(experience: experience) : null,
+          // 모바일일 땐 startChild 사용 안함
+          startChild: isMobile
+              ? null
+              : (isLeft
+                  ? _ExperienceTimelineCard(experience: experience)
+                  : null),
+          // 모바일일 땐 무조건 endChild에 배치
+          endChild: isMobile
+              ? _ExperienceTimelineCard(experience: experience, isMobile: true)
+              : (!isLeft
+                  ? _ExperienceTimelineCard(experience: experience)
+                  : null),
         ).animate().fadeIn(duration: 800.ms, delay: (200 * i).ms).moveX(
-              begin: isLeft ? -100 : 100,
+              // 모바일: 오른쪽에서 등장, 데스크탑: 좌우 방향에 맞게
+              begin: isMobile ? 50 : (isLeft ? -100 : 100),
               duration: 600.ms,
               delay: (200 * i).ms,
               curve: Curves.easeOut,
@@ -95,8 +116,12 @@ class ExperienceSection extends StatelessWidget {
 
 class _ExperienceTimelineCard extends StatelessWidget {
   final Experience experience;
+  final bool isMobile;
 
-  const _ExperienceTimelineCard({required this.experience});
+  const _ExperienceTimelineCard({
+    required this.experience,
+    this.isMobile = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +130,10 @@ class _ExperienceTimelineCard extends StatelessWidget {
 
     return Card(
       elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+      // 모바일일 때 마진 조정 (왼쪽 여백을 줄이고 오른쪽을 확보)
+      margin: isMobile
+          ? const EdgeInsets.fromLTRB(16, 16, 0, 16)
+          : const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: color.withOpacity(0.5), width: 1),
