@@ -1,5 +1,17 @@
 import 'troubleshooting.dart';
 
+class ReleaseLog {
+  final String version;
+  final String date;
+  final List<String> changes;
+
+  const ReleaseLog({
+    required this.version,
+    required this.date,
+    required this.changes,
+  });
+}
+
 class Project {
   final String id; // 프로젝트 고유 식별자
   final String title; // 프로젝트 제목
@@ -16,8 +28,10 @@ class Project {
   final String period; // 프로젝트 진행 기간
   final String teamSize; // 팀 구성
   final String? imageUrl; // 프로젝트 이미지 URL
-  final String? demoUrl; // 데모 사이트 URL
+  final String? demoUrl; // 데모 사이트 URL (영상 등)
+  final String? deployUrl; // 실제 배포 URL (스토어/패키지 링크)
   final String? githubUrl; // GitHub 저장소 URL
+  final List<ReleaseLog>? releaseLogs; // 릴리즈 로그
 
   Project({
     required this.id,
@@ -36,6 +50,8 @@ class Project {
     required this.teamSize,
     this.imageUrl,
     this.demoUrl,
+    this.deployUrl,
     this.githubUrl,
+    this.releaseLogs,
   });
 }

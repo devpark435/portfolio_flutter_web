@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static const Color primaryColorLight = Color(0xFF005A9C);
@@ -12,7 +11,8 @@ class AppTheme {
       primaryColor: primaryColorLight,
       scaffoldBackgroundColor: const Color(0xFFF5F5F7),
       cardColor: Colors.white,
-      textTheme: GoogleFonts.notoSansKrTextTheme(baseTheme.textTheme).apply(
+      textTheme: baseTheme.textTheme.apply(
+        fontFamily: 'PretendardVariable',
         bodyColor: const Color(0xFF333333),
         displayColor: const Color(0xFF111111),
       ),
@@ -38,7 +38,8 @@ class AppTheme {
       primaryColor: primaryColorDark,
       scaffoldBackgroundColor: const Color(0xFF121212),
       cardColor: const Color(0xFF1E1E1E),
-      textTheme: GoogleFonts.notoSansKrTextTheme(baseTheme.textTheme).apply(
+      textTheme: baseTheme.textTheme.apply(
+        fontFamily: 'PretendardVariable',
         bodyColor: Colors.white.withOpacity(0.87),
         displayColor: Colors.white,
       ),

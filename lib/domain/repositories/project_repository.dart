@@ -10,7 +10,131 @@ class ProjectRepository {
   Future<List<Project>> getProjects() async {
     return [
       Project(
-        id: '0',
+        id: '0', // ID는 순서에 맞게 조정
+        title: '쓰윽 (Swipe Gallery)',
+        summary: '스와이프 제스처를 활용한 고성능 갤러리 정리 및 AI 중복 사진 추천 서비스',
+        keyFeatures: [
+          'Tinder 스타일의 직관적인 스와이프 인터페이스 (Left: Keep, Right: Trash)',
+          'OpenCV 히스토그램 분석을 이용한 유사/중복 사진 자동 그룹화 및 추천',
+          '대용량 갤러리(10,000장+)의 빠른 로딩을 위한 인덱싱 및 캐싱 시스템',
+          '동영상 썸네일 재생 및 정리 지원',
+          '실수로 삭제한 사진 복구를 위한 휴지통 및 Undo(실행 취소) 기능',
+        ],
+        background: '''
+스마트폰 용량이 늘어나면서 갤러리에 불필요한 사진(스크린샷, 연사 등)이 쌓이지만, 
+이를 하나씩 확인하고 삭제하는 과정이 너무 지루하고 번거롭다는 점에 착안했습니다. 
+게임처럼 재미있고 빠르게 사진을 정리할 수 있는 경험을 제공하고자 개발했습니다.
+''',
+        meaning: '''
+단순한 UI 구현을 넘어, 수만 장의 로컬 미디어 데이터를 다루면서 발생할 수 있는 
+메모리 이슈와 렌더링 성능 문제를 깊이 있게 파고들었습니다. 
+특히 OpenCV 연산을 Isolate로 분리하여 UI 블로킹을 해결하고, 
+사용자 경험을 위해 앨범 탐색 위치를 영구 저장하는 등 디테일한 UX 최적화 역량을 길렀습니다.
+''',
+        description: 'AI 분석과 스와이프 액션을 결합하여 가장 빠르고 재미있게 앨범 용량을 확보해주는 유틸리티 앱입니다.',
+        technologies: [
+          'Flutter',
+          'Riverpod',
+          'GoRouter',
+          'PhotoManager',
+          'OpenCV (Dart FFI)',
+          'Isolate',
+          'SharedPreferences',
+        ],
+        challenges: [
+          '10,000장 이상의 고해상도 이미지/동영상 로딩 시 메모리 및 스크롤 성능 최적화',
+          'OpenCV를 활용한 이미지 유사도 분석 시 메인 스레드 블로킹 현상 해결',
+          '실수 방지를 위한 다중 Undo(실행 취소) 로직 및 상태 관리',
+          'iOS/Android 권한 정책 대응 및 스토어 배포 프로세스',
+        ],
+        responsibilities: [
+          '전체 앱 아키텍처 설계 (MVVM + Riverpod)',
+          'PhotoManager를 활용한 커스텀 미디어 갤러리 엔진 구현',
+          'OpenCV 기반 이미지 히스토그램 분석 및 유사도 알고리즘 적용',
+          'UI/UX 인터랙션 구현 (Card Swipe, Hero Animation)',
+          'TestFlight 배포 및 버전 관리',
+        ],
+        troubleshooting: [
+          Troubleshooting(
+            issue: '대용량 앨범 초기 진입 시 로딩 속도 저하',
+            context:
+                '10,000장 이상의 사진이 있는 경우, 매번 전체 스캔을 수행하여 앱 진입 시 3~5초 이상의 딜레이 발생',
+            solution:
+                '마지막으로 정리한 사진의 인덱스를 앨범별로 영구 저장(SharedPreferences)하여, 재진입 시 이미 정리한 사진은 건너뛰고 O(1)로 즉시 로딩되도록 개선. 정리된 사진 ID 캐싱 전략과 병행하여 초기 로딩 속도를 90% 이상 단축.',
+            learning:
+                '로컬 DB(SQLite/Prefs)를 활용한 상태 영속화의 중요성과 대량 데이터 처리 시 O(N) 비용을 줄이기 위한 인덱싱 전략 습득',
+          ),
+          Troubleshooting(
+            issue: '유사 사진 분석 시 UI 프리징(ANR) 현상',
+            context:
+                '수백 장의 사진 히스토그램을 OpenCV로 비교 연산하는 과정에서 메인 스레드가 점유되어 UI가 멈추고 터치가 먹통이 되는 현상',
+            solution:
+                'Dart의 Isolate(별도 스레드)를 생성하여 무거운 이미지 분석 연산을 백그라운드로 격리. compute/Isolate.run 함수를 활용해 연산 결과만 메인 스레드로 비동기 전송하여 UI 부드러움을 유지.',
+            learning:
+                'Flutter의 단일 스레드 모델의 한계를 이해하고, Isolate를 통한 병렬 처리를 통해 CPU 집약적인 작업을 효율적으로 분산하는 방법 체득',
+          ),
+          Troubleshooting(
+            issue: '동영상 썸네일 생성 및 메모리 누수',
+            context: '리스트에 동영상이 포함될 때마다 썸네일을 실시간 생성하며 스크롤 버벅임과 메모리 사용량 급증',
+            solution:
+                'PhotoManager의 썸네일 캐싱 기능을 활용하고, 뷰포트에 보이는 항목만 렌더링하도록 GridView 최적화. 동영상 재생 시에만 정밀한 리소스를 로드하고 화면 이탈 시 즉시 dispose하여 메모리 안정성 확보.',
+            learning: '미디어 리소스의 생명주기 관리와 리스트 뷰에서의 리소스 재사용 메커니즘에 대한 이해 심화',
+          ),
+        ],
+        improvements: [
+          '클라우드(iCloud/Google Photos) 연동 지원',
+          '삭제된 사진 용량 통계 대시보드',
+          'AI 분석 정확도 조절 옵션 추가',
+        ],
+        releaseLogs: const [
+          ReleaseLog(
+            version: '1.2.1',
+            date: '2025.12.25',
+            changes: [
+              '스킵된 사진 ID 누적으로 인한 초기 로딩 지연 문제 해결 (O(N) → O(1))',
+              '앨범별 마지막 탐색 위치(Index) 영구 저장 로직 구현',
+              '기존 대비 초기 로딩 속도 약 70% 성능 향상',
+            ],
+          ),
+          ReleaseLog(
+            version: '1.2.0',
+            date: '2025.12.20',
+            changes: [
+              '스택(Stack) 기반 다중 실행 취소(Multi-Undo) 기능 구현',
+              '앱 재실행 시 마지막 정리 위치 자동 복구 기능',
+              '동영상 에셋 썸네일 추출 및 휴지통 내 재생 지원',
+              '전체 진행 상황 초기화(Reset) 옵션 추가',
+              'Pretendard 폰트 적용 및 UI/UX 디자인 개선',
+            ],
+          ),
+          ReleaseLog(
+            version: '1.1.0', // 기능 추가 업데이트
+            date: '2025.12.16',
+            changes: [
+              '동영상(AssetType.video) 미디어 정리 지원 및 썸네일 메모리 캐싱 최적화',
+              '스택(Stack) 자료구조를 활용한 다중 실행 취소(Multi-Undo) 상태 관리 구현',
+              'PhotoManager 페이징(Paging) 처리 개선을 통한 갤러리 스크롤 성능 확보',
+            ],
+          ),
+          ReleaseLog(
+            version: '1.0.0', // 초기 버전
+            date: '2025.12.15',
+            changes: [
+              'MVP(Minimum Viable Product) 앱스토어 배포',
+              '제스처 감지(GestureDetector) 기반의 카드 스와이프 인터랙션 및 애니메이션 구현',
+              '삭제 대기 항목 관리를 위한 휴지통 시스템 및 복구 로직 구축',
+            ],
+          ),
+        ],
+        period: '2025.12.05 ~ 진행 중',
+        teamSize: '개인 프로젝트',
+        githubUrl: 'https://github.com/devpark435/swipe_gallery',
+        deployUrl:
+            'https://apps.apple.com/kr/app/%EC%93%B0%EC%9C%BD/id6756438607',
+        imageUrl: 'images/sseueug.png', // 이미지 경로
+      ),
+      Project(
+        id: '1',
         title: 'Reactive Mind Map',
         summary: '다양한 레이아웃과 동적 상호작용을 지원하는 고성능 Flutter 마인드맵 위젯',
         keyFeatures: [
@@ -91,11 +215,11 @@ Flutter 렌더링 시스템에 대한 깊은 이해를 얻을 수 있었습니�
         period: '2023.01.10 ~ 진행 중',
         teamSize: '개인 프로젝트 (오픈소스)',
         githubUrl: 'https://github.com/devpark435/reactive_mind_map',
-        demoUrl: 'https://pub.dev/packages/reactive_mind_map',
+        deployUrl: 'https://pub.dev/packages/reactive_mind_map',
         imageUrl: 'images/reactive_mindmap.png',
       ),
       Project(
-        id: '1',
+        id: '2',
         title: '식목일(식단, 목표, 일일운동량)',
         summary: '운동과 식단 관리를 위한 올인원 헬스케어 플랫폼',
         keyFeatures: [
@@ -176,7 +300,7 @@ iOS 앱 개발에서 MVVM 아키텍처와 RxSwift를 활용한 반응형 프로�
         imageUrl: 'images/sikmogil.png',
       ),
       Project(
-          id: '2',
+          id: '3',
           title: 'Copro',
           summary: '사이드 프로젝트 팀원 매칭 및 개발자 네트워킹 플랫폼',
           keyFeatures: [
@@ -249,7 +373,7 @@ Firebase를 활용한 실시간 채팅 시스템과 데이터베이스 구현을
           githubUrl: 'https://github.com/Nangman-Archive/CoPro_iOS',
           imageUrl: 'images/copro.png'),
       Project(
-          id: '3',
+          id: '4',
           title: '오늘의 날씨',
           summary: 'openweathermap API를 활용하여 날씨 예보 및 미세먼지 측정 어플리케이션',
           keyFeatures: [
@@ -317,7 +441,7 @@ Firebase를 활용한 실시간 채팅 시스템과 데이터베이스 구현을
           githubUrl: 'https://github.com/NBCampArchive/Today-s_weather',
           imageUrl: 'images/weather.png'),
       Project(
-          id: '4',
+          id: '5',
           title: 'Twelve Cinema',
           summary: 'TheMovie DB API를 활용한 영화 정보 및 예매 시스템',
           keyFeatures: ['영화 정보 검색 및 조회', '예매 시스템', '사용자 리뷰 기능', '개인화된 추천 시스템'],
@@ -378,7 +502,7 @@ TheMovie DB API를 활용하여 풍부한 영화 정보를 제공하고,
           githubUrl: 'https://github.com/NBCampArchive/CinemaApp',
           imageUrl: 'images/twelvecinema.png'),
       Project(
-          id: '5',
+          id: '6',
           title: 'ZIKIZA',
           summary: 'UN 지속가능한 개발 목표(SDGs)를 위한 환경 캠페인 플랫폼',
           keyFeatures: [
@@ -458,7 +582,7 @@ ZIKIZA는 미라클 챌린지와 같은 서비스에 영향을 받아 환경 보
           imageUrl: 'images/zikiza.png',
           demoUrl: 'https://www.youtube.com/watch?v=yYz4czlmn0Q'),
       Project(
-          id: '6',
+          id: '7',
           title: 'Catch Country',
           summary: '국가별 퀴즈를 통한 문화 인식 향상 교육 플랫폼',
           keyFeatures: [
@@ -507,7 +631,7 @@ Flutter를 활용한 크로스 플랫폼 개발과 실시간 점수 시스템 �
           teamSize: 'Flutter 1인, Back-end 2인',
           githubUrl: 'https://github.com/devpark435/catchCountry_flutter_app'),
       Project(
-          id: '7',
+          id: '8',
           title: 'PetMily',
           summary: '반려동물 보호자를 위한 종합 커뮤니티 플랫폼',
           keyFeatures: ['반려동물 프로필 관리', '커뮤니티 기능', '정보 공유 시스템', '반려동물 케어 가이드'],

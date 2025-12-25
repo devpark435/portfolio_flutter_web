@@ -153,7 +153,9 @@ class ProjectDetailScreen extends ConsumerWidget {
                     const SizedBox(height: 24),
 
                     // Project Links
-                    if (project.demoUrl != null || project.githubUrl != null)
+                    if (project.demoUrl != null ||
+                        project.githubUrl != null ||
+                        project.deployUrl != null)
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
@@ -195,13 +197,21 @@ class ProjectDetailScreen extends ConsumerWidget {
                               spacing: 12,
                               runSpacing: 12,
                               children: [
+                                if (project.deployUrl != null)
+                                  _buildLinkButton(
+                                    context,
+                                    '배포 링크',
+                                    Icons.rocket_launch,
+                                    project.deployUrl!,
+                                    isPrimary: true,
+                                  ),
                                 if (project.demoUrl != null)
                                   _buildLinkButton(
                                     context,
                                     '라이브 데모',
-                                    Icons.launch,
+                                    Icons.play_circle_outline,
                                     project.demoUrl!,
-                                    isPrimary: true,
+                                    isPrimary: project.deployUrl == null,
                                   ),
                                 if (project.githubUrl != null)
                                   _buildLinkButton(
