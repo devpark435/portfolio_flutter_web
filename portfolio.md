@@ -1,8 +1,21 @@
-# 더 나은 사용자 경험을 설계하는 iOS 개발자, 박현렬입니다
+# 더 나은 사용자 경험을 설계하는 모바일 개발자, 박현렬입니다
 
 <img src="assets/images/profile.jpg" alt="Profile Image" width="150"/>
 
-> 주어진 문제를 해결하는 것을 넘어, 더 나은 사용자 경험과 안정적인 시스템을 위한 최적의 설계를 끊임없이 고민합니다. **Flutter를 통한 크로스플랫폼 개발 경험도 있지만, 특히 Swift와 UIKit/SwiftUI를 활용하여 iOS의 네이티브 성능과 감성을 극대화하는 것에 가장 큰 강점과 흥미를 가지고 있습니다.** 변화에 열린 자세로 새로운 기술을 학습하고, 주도적으로 제품 개선에 기여하는 개발자가 되겠습니다.
+> 주어진 문제를 해결하는 것을 넘어, 더 나은 사용자 경험과 안정적인 시스템 설계를 고민합니다.  
+> Flutter와 iOS 네이티브 개발 모두에서 실전 경험을 쌓아왔으며, 각 플랫폼의 장점을 이해하고 상황에 맞는 최적의 선택을 할 수 있습니다.
+
+## Flutter와 iOS를 아우르는 모바일 개발자
+- 스타트업에서 모바일 앱 개발 전담, 백엔드·AI·웹팀과 협업하며 설계부터 스토어 출시·운영까지 전 과정 주도
+- Riverpod 상태관리, Clean Architecture 기반 구조 설계 경험
+- GitHub Actions 기반 CI/CD 구축
+- Flutter 패키지 직접 개발 및 배포
+- RxSwift, Combine 기반 MVVM 패턴 iOS 개발 및 App Store 라이프스타일 50위 달성
+
+## 협업과 지식 공유에 열정적인 개발자
+- 기획자, 백엔드·AI·웹 개발자와 협업하며 제품 개발
+- GDSC 모바일 개발 세션 리드를 통한 지식 공유
+- 연합 해커톤 2등 등 다수의 팀 프로젝트 수상 경험
 
 ---
 
@@ -40,18 +53,17 @@
 
 ### **Work Experience**
 **주식회사 이프립** | Flutter 개발자
-*2025.05 - 2025.08.31*
-*   AI 진로/진학 컨설팅 서비스 개발 및 유지보수 담당
-*   자사 홈페이지 어플리케이션 개발 및 유지보수 담당
-*   신규 기능 기획 및 개발 참여
-*   성능 최적화 및 사용자 경험 개선 참여
+*2023.05 - 2024.08*
+
+* AI 진로/진학 컨설팅 서비스 앱 신규 개발 및 운영
+  - Clean Architecture 기반 설계, Riverpod 상태관리, GoRouter 라우팅
+  - AI 챗봇, 결제 연동, 푸시 알림, 외부 인원 초대 기능 구현
+* 자사 홈페이지 앱 개발 및 유지보수
+* 오픈소스 패키지 개발 및 pub.dev 배포
+  - reactive_mind_map: 드래그 기반 인터랙티브 마인드맵 위젯
+* 광주 진로/진학 관련 개발 컨퍼런스 기획 및 운영
 
 ### **Freelance Projects**
-**프랜차이즈 웹 외주 프로젝트** | 프론트엔드 개발자
-*2025.01 - 진행 중*
-*   프렌차이즈 홍보 목적 브랜딩 페이지 제작
-*   Flutter Web 활용한 반응형 디자인 구현
-
 **매장 관리 시스템 외주 프로젝트** | 프론트엔드 개발자
 *2024.09 - 2024.11*
 *   매장 재고 관리, 주문 관리 시스템 개발
@@ -84,7 +96,65 @@
 
 ---
 
-### **1. 식목일 (식단, 목표, 일일운동량)**
+### **1. 쓰윽 (Swipe Gallery)**
+<img src="assets/images/sseueug.png" alt="쓰윽 (Swipe Gallery)" width="600"/>
+
+> 스와이프 제스처를 활용한 고성능 갤러리 정리 및 AI 중복 사진 추천 서비스
+
+*   **기간:** 2025.12.05 ~ 진행 중
+*   **팀 구성:** 개인 프로젝트
+*   **GitHub:** [https://github.com/devpark435/swipe_gallery](https://github.com/devpark435/swipe_gallery)
+*   **App Store:** [https://apps.apple.com/kr/app/쓰윽/id6756438607](https://apps.apple.com/kr/app/쓰윽/id6756438607)
+*   **주요 기술:** `Flutter`, `Riverpod`, `GoRouter`, `PhotoManager`, `OpenCV (Dart FFI)`, `Isolate`, `SharedPreferences`
+*   **주요 기능:**
+    *   Tinder 스타일의 직관적인 스와이프 인터페이스 (Left: Keep, Right: Trash)
+    *   OpenCV 히스토그램 분석을 이용한 유사/중복 사진 자동 그룹화 및 추천
+    *   대용량 갤러리(10,000장+)의 빠른 로딩을 위한 인덱싱 및 캐싱 시스템
+    *   동영상 썸네일 재생 및 정리 지원
+    *   실수로 삭제한 사진 복구를 위한 휴지통 및 Undo(실행 취소) 기능
+*   **담당 역할 및 기여:**
+    *   전체 앱 아키텍처 설계 (MVVM + Riverpod)
+    *   PhotoManager를 활용한 커스텀 미디어 갤러리 엔진 구현
+    *   OpenCV 기반 이미지 히스토그램 분석 및 유사도 알고리즘 적용
+    *   UI/UX 인터랙션 구현 (Card Swipe, Hero Animation)
+    *   TestFlight 배포 및 버전 관리
+*   **문제 해결 경험 (Troubleshooting):**
+    *   **대용량 앨범 초기 진입 시 로딩 속도 저하:** 마지막으로 정리한 사진의 인덱스를 앨범별로 영구 저장(SharedPreferences)하여, 재진입 시 이미 정리한 사진은 건너뛰고 O(1)로 즉시 로딩되도록 개선. 정리된 사진 ID 캐싱 전략과 병행하여 초기 로딩 속도를 90% 이상 단축.
+    *   **유사 사진 분석 시 UI 프리징(ANR) 현상:** Dart의 Isolate(별도 스레드)를 생성하여 무거운 이미지 분석 연산을 백그라운드로 격리. compute/Isolate.run 함수를 활용해 연산 결과만 메인 스레드로 비동기 전송하여 UI 부드러움을 유지.
+    *   **동영상 썸네일 생성 및 메모리 누수:** PhotoManager의 썸네일 캐싱 기능을 활용하고, 뷰포트에 보이는 항목만 렌더링하도록 GridView 최적화. 동영상 재생 시에만 정밀한 리소스를 로드하고 화면 이탈 시 즉시 dispose하여 메모리 안정성 확보.
+
+---
+
+### **2. Reactive Mind Map**
+<img src="assets/images/reactive_mindmap.png" alt="Reactive Mind Map" width="600"/>
+
+> 다양한 레이아웃과 동적 상호작용을 지원하는 고성능 Flutter 마인드맵 위젯
+
+*   **기간:** 2023.01.10 ~ 진행 중
+*   **팀 구성:** 개인 프로젝트 (오픈소스)
+*   **GitHub:** [https://github.com/devpark435/reactive_mind_map](https://github.com/devpark435/reactive_mind_map)
+*   **Pub.dev:** [https://pub.dev/packages/reactive_mind_map](https://pub.dev/packages/reactive_mind_map)
+*   **주요 기술:** `Flutter`, `Dart`, `CustomPainter`, `State Management`, `Widget API Design`, `Open Source`
+*   **주요 기능:**
+    *   7가지 이상의 다양한 마인드맵 레이아웃 지원 (방사형, 수평/수직 등)
+    *   노드 개수에 따른 자동 줌 레벨 조정 및 특정 노드 포커싱 등 스마트 카메라 기능
+    *   노드 확장/축소, 탭/롱프레스 이벤트 처리, 부드러운 팬&줌 등 높은 상호작용성
+    *   노드 모양, 연결선 색상, 자동 크기 조절 등 풍부한 커스텀 스타일링 옵션
+    *   pub.dev 정식 패키지 배포
+*   **담당 역할 및 기여:**
+    *   프로젝트 기획, 아키텍처 설계, 전체 기능 개발 총괄
+    *   CustomPainter를 활용한 핵심 렌더링 엔진 및 레이아웃 알고리즘 구현
+    *   팬&줌, 노드 인터랙션 등 사용자 상호작용 기능 개발
+    *   pub.dev 패키지 배포 및 버전 관리
+    *   GitHub 이슈 및 PR 관리를 통한 오픈소스 커뮤니티 운영
+*   **문제 해결 경험 (Troubleshooting):**
+    *   **동적 노드 추가/삭제 시 노드 겹침 현상:** 노드 변경(추가/삭제/크기 변경) 시 레이아웃을 다시 계산하고 위젯을 재구성하는 반응형 로직 도입. 변경된 노드와 그 이웃 노드들만 부분적으로 업데이트하는 최적화 알고리즘을 적용하여 전체 맵을 다시 그리는 비용을 최소화
+    *   **사용자 정의 위젯으로 노드 커스텀 시 오버플로우 발생:** 커스텀 위젯의 크기를 내부적으로 측정한 후, 측정된 크기에 맞춰 부모 노드의 크기를 동적으로 재조정하는 로직 추가. LayoutBuilder를 활용하여 자식 위젯의 실제 크기를 파악하고 이에 맞춰 레이아웃을 다시 계산
+    *   **특정 노드 선택 시 부드러운 카메라 포커싱 구현:** 카메라의 현재 위치와 목표 노드의 위치를 보간(interpolate)하는 애니메이션 컨트롤러 구현. Tween과 Curve를 사용하여 가속/감속 효과를 적용, 사용자가 카메라의 이동 경로를 자연스럽게 따라갈 수 있도록 하여 시각적 연속성을 보장함
+
+---
+
+### **3. 식목일 (식단, 목표, 일일운동량)**
 <img src="assets/images/sikmogil.png" alt="식목일" width="600"/>
 
 > 운동과 식단 관리를 위한 올인원 헬스케어 플랫폼. **앱스토어 라이프스타일 카테고리 63위 달성**
@@ -108,7 +178,7 @@
 
 ---
 
-### **2. Copro**
+### **4. Copro**
 <img src="assets/images/copro.png" alt="Copro" width="600"/>
 
 > 사이드 프로젝트 팀원 매칭 및 개발자 네트워킹 플랫폼
@@ -131,7 +201,7 @@
 
 ---
 
-### **3. 오늘의 날씨**
+### **5. 오늘의 날씨**
 <img src="assets/images/weather.png" alt="오늘의 날씨" width="600"/>
 
 > openweathermap API를 활용하여 날씨 예보 및 미세먼지 측정 어플리케이션
@@ -154,7 +224,7 @@
 
 ---
 
-### **4. Twelve Cinema**
+### **6. Twelve Cinema**
 <img src="assets/images/twelvecinema.png" alt="Twelve Cinema" width="600"/>
 
 > TheMovie DB API를 활용한 영화 정보 및 예매 시스템
@@ -177,7 +247,7 @@
 
 ---
 
-### **5. ZIKIZA**
+### **7. ZIKIZA**
 <img src="assets/images/zikiza.png" alt="ZIKIZA" width="600"/>
 
 > UN 지속가능한 개발 목표(SDGs)를 위한 환경 캠페인 플랫폼

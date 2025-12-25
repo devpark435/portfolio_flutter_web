@@ -6,21 +6,13 @@ final List<Experience> experiences = [
     role: 'Flutter 개발자',
     period: '2025.05 - 2025.08.31',
     description: [
-      'AI 진로/진학 컨설팅 서비스 개발 및 유지보수 담당',
-      '신규 기능 기획 및 개발 참여',
-      '성능 최적화 및 사용자 경험 개선 참여',
+      'AI 진로/진학 컨설팅 서비스 앱 신규 개발 (Clean Architecture, Riverpod, GoRouter)',
+      'AI 챗봇, 결제 연동, 푸시 알림, 외부 초대 기능 구현',
+      '자사 홈페이지 앱 개발 및 유지보수',
+      'Flutter 오픈소스 패키지 개발 및 pub.dev 배포 (reactive_mind_map)',
+      '광주 진로/잔학 관련 개발 컨퍼런스 기획 및 운영',
     ],
     type: 'work',
-  ),
-  const Experience(
-    title: '프랜차이즈 웹 외주 프로젝트',
-    role: '프론트엔드 개발자',
-    period: '2025.01 - 진행 중',
-    description: [
-      '프렌차이즈 홍보 목적 브랜딩 페이지 제작',
-      'Flutter Web 활용한 반응형 디자인 구현',
-    ],
-    type: 'freelance',
   ),
   const Experience(
     title: '매장 관리 시스템 외주 프로젝트',
