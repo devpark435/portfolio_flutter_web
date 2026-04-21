@@ -228,6 +228,7 @@ class _SectionBg extends StatelessWidget {
   final _BlobVariant? blob;
 
   const _SectionBg({
+    super.key,
     required this.child,
     this.alternate = false,
     this.blob,
