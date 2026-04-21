@@ -22,7 +22,7 @@ const List<Award> awards = [
     award: '2등',
   ),
   Award(
-    title: '성공회 대학교 교내 경진 대회',
+    title: '성공회대학교 교내 경진 대회',
     date: 'April 14, 2019',
     award: '장려상',
   ),

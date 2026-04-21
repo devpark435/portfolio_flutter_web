@@ -8,49 +8,31 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.32.8' # Update to the version suggested by the error log
           channel: 'stable'
           cache: true
-      
+
       - name: Install dependencies
         run: flutter pub get
-      
-      # 웹 에셋 디렉토리 확인 및 에셋 복사 단계 추가
-      - name: Ensure web assets directory exists
-        run: |
-          mkdir -p web/assets/images
-          cp -r assets/images/* web/assets/images/ || echo "No assets to copy or directory not found"
-      
-      - name: Build
-        run: |
-          flutter build web --release --base-href "/portfolio_flutter_web/"
-      
-      # 빌드 후 에셋 복사 확인 단계 추가
-      - name: Copy assets to build output if needed
-        run: |
-          if [ -d "assets/images" ] && [ ! -d "build/web/assets/images" ]; then
-            mkdir -p build/web/assets/images
-            cp -r assets/images/* build/web/assets/images/
-          fi
-      
-      - name: Deploy
+
+      - name: Build Web
+        run: flutter build web --release --base-href "/portfolio_flutter_web/"
+
+      - name: Verify build output
+        run: ls -la build/web
+
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web
-          force_orphan: true          
-      - name: Verify build
-        run: |
-          echo "Listing contents of build/web directory:"
-          ls -la build/web
-          echo "Listing contents of assets directory (if exists):"
-          ls -la build/web/assets || echo "No assets directory"
+          force_orphan: true
