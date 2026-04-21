@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_web/config/providers/providers.dart';
 
-import '../../../widgets/contact_button.dart';
-
 class HeroSection extends ConsumerStatefulWidget {
   final Map<String, GlobalKey> sectionKeys;
   const HeroSection({super.key, required this.sectionKeys});

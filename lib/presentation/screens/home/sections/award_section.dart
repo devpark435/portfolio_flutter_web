@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:portfolio_web/config/providers/providers.dart';
 import 'package:portfolio_web/data/awards.dart';
 import '../../../../domain/models/award.dart';
+import '../../../widgets/scroll_reveal_widget.dart';
 import '../../../widgets/section_title.dart';
 import '../../../widgets/section_wrapper.dart';
 
@@ -14,131 +12,119 @@ class AwardsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return SectionWrapper(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionTitle(title: '수상 경력'),
-          const SizedBox(height: 16),
-          Text(
-            '저의 노력과 열정이 담긴 성과들입니다.',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context)
-                      .textTheme
-                      .bodyLarge
-                      ?.color
-                      ?.withOpacity(0.7),
-                ),
-            textAlign: TextAlign.center,
-          ),
           const SizedBox(height: 48),
-          LayoutBuilder(builder: (context, constraints) {
-            final isWide = constraints.maxWidth > 800;
-            return Wrap(
-              spacing: 24,
-              runSpacing: 24,
-              alignment: WrapAlignment.center,
-              children: awards
-                  .map((award) => ConstrainedBox(
-                        constraints:
-                            BoxConstraints(maxWidth: isWide ? 300 : 400),
-                        child: _AwardCard(award: award),
-                      ))
-                  .toList()
-                  .animate(interval: 100.ms)
-                  .fadeIn(duration: 500.ms, delay: 200.ms)
-                  .moveY(begin: 30, duration: 500.ms, curve: Curves.easeOut),
-            );
-          }),
+          ...awards.asMap().entries.map(
+                (e) => ScrollRevealWidget(
+                  delay: Duration(milliseconds: e.key * 80),
+                  child: _AwardRow(award: e.value),
+                ),
+              ),
         ],
       ),
     );
   }
 }
 
-class _AwardCard extends ConsumerStatefulWidget {
+class _AwardRow extends StatefulWidget {
   final Award award;
-  const _AwardCard({required this.award});
+  const _AwardRow({required this.award});
 
   @override
-  ConsumerState<_AwardCard> createState() => _AwardCardState();
+  State<_AwardRow> createState() => _AwardRowState();
 }
 
-class _AwardCardState extends ConsumerState<_AwardCard> {
-  bool _isHovered = false;
+class _AwardRowState extends State<_AwardRow> {
+  bool _hovered = false;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final awardColor = _getAwardColor(context, widget.award.award);
+    final primary = theme.colorScheme.primary;
+    final isDark = theme.brightness == Brightness.dark;
+    final awardColor = _awardColor(widget.award.award);
 
     return MouseRegion(
-      onEnter: (event) {
-        setState(() => _isHovered = true);
-        ref.read(cursorProvider.notifier).setHovering(true);
-      },
-      onExit: (event) {
-        setState(() => _isHovered = false);
-        ref.read(cursorProvider.notifier).setHovering(false);
-      },
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+        duration: const Duration(milliseconds: 200),
+        margin: const EdgeInsets.only(bottom: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         decoration: BoxDecoration(
-          color: theme.cardColor,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: _isHovered
-                ? awardColor.withOpacity(0.5)
-                : theme.dividerColor.withOpacity(0.2),
-            width: 1,
-          ),
-          gradient: _isHovered
-              ? RadialGradient(
-                  colors: [awardColor.withOpacity(0.15), theme.cardColor],
-                  center: Alignment.center,
-                  radius: 0.8,
-                )
-              : null,
-          boxShadow: _isHovered
-              ? [
-                  BoxShadow(
-                    color: awardColor.withOpacity(0.1),
-                    blurRadius: 20,
-                    spreadRadius: 4,
-                  ),
-                ]
-              : [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-        ),
-        child: Column(
-          children: [
-            Icon(
-              _getAwardIcon(widget.award.award),
-              size: 48,
-              color: awardColor,
+          color: _hovered
+              ? primary.withOpacity(0.05)
+              : Colors.transparent,
+          border: Border(
+            bottom: BorderSide(
+              color: isDark
+                  ? Colors.white.withOpacity(0.06)
+                  : Colors.black.withOpacity(0.06),
             ),
-            const SizedBox(height: 24),
-            Text(
-              widget.award.award,
-              style: theme.textTheme.headlineSmall?.copyWith(
+          ),
+        ),
+        child: Row(
+          children: [
+            // Medal icon
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: awardColor.withOpacity(0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                _awardIcon(widget.award.award),
                 color: awardColor,
-                fontWeight: FontWeight.bold,
+                size: 20,
               ),
             ),
-            const SizedBox(height: 12),
-            Text(
-              widget.award.title,
-              style: theme.textTheme.titleMedium,
-              textAlign: TextAlign.center,
+            const SizedBox(width: 20),
+            // Rank + title
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.award.title,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    widget.award.date,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.textTheme.bodySmall?.color?.withOpacity(0.45),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              widget.award.date,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
+            // Award rank pill
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+              decoration: BoxDecoration(
+                color: _hovered
+                    ? awardColor.withOpacity(0.18)
+                    : awardColor.withOpacity(0.10),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: awardColor.withOpacity(_hovered ? 0.45 : 0.25),
+                ),
+              ),
+              child: Text(
+                widget.award.award,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: awardColor,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                  letterSpacing: 0.3,
+                ),
               ),
             ),
           ],
@@ -147,34 +133,29 @@ class _AwardCardState extends ConsumerState<_AwardCard> {
     );
   }
 
-  Color _getAwardColor(BuildContext context, String award) {
-    final theme = Theme.of(context);
-    switch (award.toLowerCase()) {
+  Color _awardColor(String award) {
+    switch (award) {
       case '우수상':
       case '1등':
       case '금상':
       case '대상':
-        return const Color(0xFFFFD700); // Gold
+        return const Color(0xFFFFD700);
       case '2등':
       case '은상':
-        return const Color(0xFFC0C0C0); // Silver
+        return const Color(0xFFB0BEC5);
       case '3등':
       case '동상':
       case '장려상':
-        return const Color(0xFFCD7F32); // Bronze
+        return const Color(0xFFCD7F32);
       case '인기상':
         return Colors.pinkAccent;
       default:
-        return theme.colorScheme.primary;
+        return Theme.of(context).colorScheme.primary;
     }
   }
 
-  IconData _getAwardIcon(String award) {
-    switch (award.toLowerCase()) {
-      case '인기상':
-        return Icons.favorite;
-      default:
-        return Icons.emoji_events;
-    }
+  IconData _awardIcon(String award) {
+    if (award == '인기상') return Icons.favorite;
+    return Icons.emoji_events;
   }
 }

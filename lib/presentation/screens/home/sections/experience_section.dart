@@ -1,219 +1,422 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:portfolio_web/data/experiences.dart';
-import 'package:timeline_tile/timeline_tile.dart';
-
 import '../../../../domain/models/experience.dart';
 import '../../../widgets/section_title.dart';
 import '../../../widgets/section_wrapper.dart';
 
-class ExperienceSection extends StatelessWidget {
+class ExperienceSection extends StatefulWidget {
   const ExperienceSection({super.key});
+
+  @override
+  State<ExperienceSection> createState() => _ExperienceSectionState();
+}
+
+class _ExperienceSectionState extends State<ExperienceSection> {
+  int _selected = 0;
 
   @override
   Widget build(BuildContext context) {
     return SectionWrapper(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionTitle(title: "경력 & 활동"),
-          const SizedBox(height: 16),
-          Text(
-            '저의 성장 과정을 시간 순서대로 확인해보세요.',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context)
-                      .textTheme
-                      .bodyLarge
-                      ?.color
-                      ?.withOpacity(0.7),
-                ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 64),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              // 800px 미만이면 모바일 모드 (왼쪽 정렬)
-              final isMobile = constraints.maxWidth < 800;
-              return Column(
-                children: _buildTimeline(context, isMobile),
-              );
-            },
-          ),
+          const SectionTitle(title: '경력 & 활동'),
+          const SizedBox(height: 48),
+          LayoutBuilder(builder: (context, constraints) {
+            final isWide = constraints.maxWidth > 700;
+            return isWide
+                ? _DesktopLayout(
+                    selected: _selected,
+                    onSelect: (i) => setState(() => _selected = i),
+                  )
+                : _MobileLayout();
+          }),
         ],
       ),
     );
   }
+}
 
-  List<Widget> _buildTimeline(BuildContext context, bool isMobile) {
-    final List<Widget> timelineItems = [];
+// ─── Desktop: left tab list + right animated panel ───────────────────────────
 
-    for (int i = 0; i < experiences.length; i++) {
-      final experience = experiences[i];
-      // 모바일이면 무조건 오른쪽(endChild)에 배치, 데스크탑이면 지그재그
-      final bool isLeft = isMobile ? false : i.isEven;
+class _DesktopLayout extends StatelessWidget {
+  final int selected;
+  final ValueChanged<int> onSelect;
 
-      timelineItems.add(
-        TimelineTile(
-          axis: TimelineAxis.vertical,
-          // 모바일: 왼쪽 정렬 (좌측 0.1 지점), 데스크탑: 중앙 정렬
-          alignment: isMobile ? TimelineAlign.manual : TimelineAlign.center,
-          lineXY: isMobile ? 0.05 : 0.5,
-          isFirst: i == 0,
-          isLast: i == experiences.length - 1,
-          beforeLineStyle: LineStyle(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-            thickness: 2,
+  const _DesktopLayout({required this.selected, required this.onSelect});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Left tab rail
+        SizedBox(
+          width: 220,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: experiences.asMap().entries.map((e) {
+              return _TabItem(
+                experience: e.value,
+                isActive: e.key == selected,
+                onTap: () => onSelect(e.key),
+              );
+            }).toList(),
           ),
-          indicatorStyle: IndicatorStyle(
-            width: 40,
-            height: 40,
-            indicator: _buildIndicator(context, experience),
-            padding: const EdgeInsets.all(8),
-          ),
-          // 모바일일 땐 startChild 사용 안함
-          startChild: isMobile
-              ? null
-              : (isLeft
-                  ? _ExperienceTimelineCard(experience: experience)
-                  : null),
-          // 모바일일 땐 무조건 endChild에 배치
-          endChild: isMobile
-              ? _ExperienceTimelineCard(experience: experience, isMobile: true)
-              : (!isLeft
-                  ? _ExperienceTimelineCard(experience: experience)
-                  : null),
-        ).animate().fadeIn(duration: 800.ms, delay: (200 * i).ms).moveX(
-              // 모바일: 오른쪽에서 등장, 데스크탑: 좌우 방향에 맞게
-              begin: isMobile ? 50 : (isLeft ? -100 : 100),
-              duration: 600.ms,
-              delay: (200 * i).ms,
-              curve: Curves.easeOut,
-            ),
-      );
-    }
-    return timelineItems;
-  }
-
-  Widget _buildIndicator(BuildContext context, Experience experience) {
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: _getExperienceColor(experience.type).withOpacity(0.2),
-        border: Border.all(
-          color: _getExperienceColor(experience.type),
-          width: 2,
         ),
-      ),
-      child: Center(
-        child: Icon(
-          _getExperienceIcon(experience.type),
-          color: _getExperienceColor(experience.type),
-          size: 20,
+        const SizedBox(width: 48),
+        // Right content panel
+        Expanded(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 260),
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0.04, 0),
+                    end: Offset.zero,
+                  ).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOut,
+                  )),
+                  child: child,
+                ),
+              );
+            },
+            child: _ContentPanel(
+              key: ValueKey(selected),
+              experience: experiences[selected],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _TabItem extends StatefulWidget {
+  final Experience experience;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _TabItem({
+    required this.experience,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  @override
+  State<_TabItem> createState() => _TabItemState();
+}
+
+class _TabItemState extends State<_TabItem> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+    final typeColor = _typeColor(widget.experience.type);
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          margin: const EdgeInsets.only(bottom: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          decoration: BoxDecoration(
+            border: Border(
+              left: BorderSide(
+                color: widget.isActive ? primary : Colors.transparent,
+                width: 2,
+              ),
+            ),
+            color: widget.isActive
+                ? primary.withOpacity(0.08)
+                : (_hovered ? primary.withOpacity(0.04) : Colors.transparent),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: typeColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      widget.experience.title,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: widget.isActive
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                        color: widget.isActive
+                            ? primary
+                            : theme.textTheme.bodyMedium?.color
+                                ?.withOpacity(0.75),
+                      ),
+                      maxLines: 2,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Padding(
+                padding: const EdgeInsets.only(left: 14),
+                child: Text(
+                  widget.experience.period,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    fontSize: 11,
+                    color: theme.textTheme.bodySmall?.color?.withOpacity(0.45),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _ExperienceTimelineCard extends StatelessWidget {
+class _ContentPanel extends StatelessWidget {
   final Experience experience;
-  final bool isMobile;
 
-  const _ExperienceTimelineCard({
+  const _ContentPanel({super.key, required this.experience});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+    final typeColor = _typeColor(experience.type);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Type badge
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: typeColor.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: typeColor.withOpacity(0.35)),
+          ),
+          child: Text(
+            _typeLabel(experience.type),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: typeColor,
+              fontWeight: FontWeight.w600,
+              fontSize: 11,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          experience.title,
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          '${experience.role}  ·  ${experience.period}',
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: primary.withOpacity(0.85),
+          ),
+        ),
+        const SizedBox(height: 28),
+        ...experience.description.map((item) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: Container(
+                      width: 5,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: primary.withOpacity(0.6),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      item,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        height: 1.65,
+                        color: theme.textTheme.bodyMedium?.color
+                            ?.withOpacity(0.82),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )),
+      ],
+    );
+  }
+}
+
+// ─── Mobile: accordion ───────────────────────────────────────────────────────
+
+class _MobileLayout extends StatefulWidget {
+  @override
+  State<_MobileLayout> createState() => _MobileLayoutState();
+}
+
+class _MobileLayoutState extends State<_MobileLayout> {
+  int _expanded = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: experiences.asMap().entries.map((e) {
+        final isOpen = e.key == _expanded;
+        return _AccordionItem(
+          experience: e.value,
+          isOpen: isOpen,
+          onTap: () => setState(() => _expanded = isOpen ? -1 : e.key),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class _AccordionItem extends StatelessWidget {
+  final Experience experience;
+  final bool isOpen;
+  final VoidCallback onTap;
+
+  const _AccordionItem({
     required this.experience,
-    this.isMobile = false,
+    required this.isOpen,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color = _getExperienceColor(experience.type);
+    final primary = theme.colorScheme.primary;
+    final typeColor = _typeColor(experience.type);
 
-    return Card(
-      elevation: 4,
-      // 모바일일 때 마진 조정 (왼쪽 여백을 줄이고 오른쪽을 확보)
-      margin: isMobile
-          ? const EdgeInsets.fromLTRB(16, 16, 0, 16)
-          : const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: color.withOpacity(0.5), width: 1),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              _getExperienceType(experience.type),
-              style: theme.textTheme.bodySmall
-                  ?.copyWith(color: color, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(experience.title, style: theme.textTheme.titleLarge),
-            const SizedBox(height: 4),
-            Text(
-              '${experience.role} | ${experience.period}',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
-              ),
-            ),
-            const SizedBox(height: 16),
-            ...experience.description.map(
-              (item) => Padding(
-                padding: const EdgeInsets.only(top: 4.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('• ', style: TextStyle(color: color, fontSize: 16)),
-                    Expanded(
-                        child: Text(item, style: theme.textTheme.bodyMedium)),
-                  ],
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            decoration: BoxDecoration(
+              color: isOpen ? primary.withOpacity(0.06) : Colors.transparent,
+              border: Border(
+                left: BorderSide(
+                  color: isOpen ? primary : Colors.transparent,
+                  width: 2,
+                ),
+                bottom: BorderSide(
+                  color: theme.dividerColor.withOpacity(0.12),
                 ),
               ),
             ),
-          ],
+            child: Row(
+              children: [
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: typeColor,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        experience.title,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight:
+                              isOpen ? FontWeight.w600 : FontWeight.w400,
+                          color: isOpen ? primary : null,
+                        ),
+                      ),
+                      Text(
+                        experience.period,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.textTheme.bodySmall?.color
+                              ?.withOpacity(0.5),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                AnimatedRotation(
+                  turns: isOpen ? 0.5 : 0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Icon(
+                    Icons.keyboard_arrow_down,
+                    color: primary.withOpacity(0.6),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
+        AnimatedCrossFade(
+          firstChild: const SizedBox.shrink(),
+          secondChild: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+            child: _ContentPanel(experience: experience),
+          ),
+          crossFadeState:
+              isOpen ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+          duration: const Duration(milliseconds: 260),
+        ),
+      ],
     );
   }
 }
 
-// Helper functions to get color, icon, and type string
-Color _getExperienceColor(String type) {
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+Color _typeColor(String type) {
   switch (type) {
     case 'work':
       return const Color(0xFF4285F4);
     case 'freelance':
       return const Color(0xFF34A853);
     case 'activity':
-      return const Color(0xFF6C63FF);
+      return const Color(0xFF9C6FFF);
     default:
       return Colors.grey;
   }
 }
 
-IconData _getExperienceIcon(String type) {
+String _typeLabel(String type) {
   switch (type) {
     case 'work':
-      return Icons.work;
+      return 'WORK';
     case 'freelance':
-      return Icons.computer;
+      return 'FREELANCE';
     case 'activity':
-      return Icons.groups;
+      return 'ACTIVITY';
     default:
-      return Icons.circle;
-  }
-}
-
-String _getExperienceType(String type) {
-  switch (type) {
-    case 'work':
-      return '회사 경력';
-    case 'freelance':
-      return '프리랜서';
-    case 'activity':
-      return '활동 경험';
-    default:
-      return '경험';
+      return 'ETC';
   }
 }

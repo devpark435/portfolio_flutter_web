@@ -108,44 +108,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   child: HeroSection(sectionKeys: _sectionKeys),
                 ),
                 SliverToBoxAdapter(
-                  key: _sectionKeys['Profile'],
                   child: _SectionBg(
+                    key: _sectionKeys['Profile'],
                     blob: _BlobVariant.topRight,
                     child: const ProfileSection(),
                   ),
                 ),
                 SliverToBoxAdapter(
-                  key: _sectionKeys['Experience'],
                   child: _SectionBg(
+                    key: _sectionKeys['Experience'],
                     alternate: true,
                     child: const ExperienceSection(),
                   ),
                 ),
                 SliverToBoxAdapter(
-                  key: _sectionKeys['Awards'],
                   child: _SectionBg(
+                    key: _sectionKeys['Awards'],
                     blob: _BlobVariant.bottomLeft,
                     child: const AwardsSection(),
                   ),
                 ),
                 SliverToBoxAdapter(
-                  key: _sectionKeys['Projects'],
                   child: _SectionBg(
+                    key: _sectionKeys['Projects'],
                     alternate: true,
                     blob: _BlobVariant.topRight,
                     child: const ProjectsSection(),
                   ),
                 ),
                 SliverToBoxAdapter(
-                  key: _sectionKeys['Skills'],
                   child: _SectionBg(
+                    key: _sectionKeys['Skills'],
                     blob: _BlobVariant.center,
                     child: const SkillsSection(),
                   ),
                 ),
                 SliverToBoxAdapter(
-                  key: _sectionKeys['Contact'],
                   child: _SectionBg(
+                    key: _sectionKeys['Contact'],
                     alternate: true,
                     child: const ContactSection(),
                   ),

@@ -36,6 +36,6 @@ const List<ProfileInfo> profileDetails = [
 ];
 
 const Map<String, String> socialLinks = {
-  'github': 'https://github.com/epreep',
-  'velog': 'https://velog.io/@epreep',
+  'github': 'https://github.com/devpark435',
+  'velog': 'https://velog.io/@devpark435',
 };
