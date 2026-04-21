@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../data/profile_info.dart';
+import '../../../../services/portfolio_pdf_service.dart';
 import '../../../widgets/section_title.dart';
 import '../../../widgets/section_wrapper.dart';
 
@@ -164,8 +165,16 @@ class _SocialAndDownload extends ConsumerWidget {
           icon: const Icon(Icons.download, size: 18),
           label: const Text('이력서'),
           style: OutlinedButton.styleFrom(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          ),
+        ),
+        const SizedBox(width: 10),
+        OutlinedButton.icon(
+          onPressed: () => PortfolioPdfService.download(),
+          icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
+          label: const Text('포트폴리오 PDF'),
+          style: OutlinedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
           ),
         ),
       ],
