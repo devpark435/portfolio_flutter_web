@@ -492,13 +492,27 @@ class _IconFallback extends StatelessWidget {
 
 // ─── Detail panel ─────────────────────────────────────────────────────────────
 
-class _DetailPanel extends StatelessWidget {
+class _DetailPanel extends StatefulWidget {
   final Project project;
 
   const _DetailPanel({super.key, required this.project});
 
   @override
+  State<_DetailPanel> createState() => _DetailPanelState();
+}
+
+class _DetailPanelState extends State<_DetailPanel> {
+  final _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final project = widget.project;
     final theme = Theme.of(context);
     final primary = theme.colorScheme.primary;
     final isDark = theme.brightness == Brightness.dark;
@@ -646,8 +660,10 @@ class _DetailPanel extends StatelessWidget {
       return SizedBox(
         height: 560,
         child: Scrollbar(
+          controller: _scrollController,
           thumbVisibility: true,
           child: SingleChildScrollView(
+            controller: _scrollController,
             padding: const EdgeInsets.only(right: 12),
             child: content,
           ),
