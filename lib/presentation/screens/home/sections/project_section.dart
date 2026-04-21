@@ -804,32 +804,44 @@ class _TsDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 40,
-          child: Text(
-            label,
-            style: theme.textTheme.bodySmall?.copyWith(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 2),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: 2, right: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
               color: highlight
-                  ? const Color(0xFF64B5F6)
-                  : theme.textTheme.bodySmall?.color?.withOpacity(0.45),
+                  ? const Color(0xFF64B5F6).withOpacity(0.12)
+                  : theme.colorScheme.onSurface.withOpacity(0.07),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              label,
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.2,
+                height: 1.4,
+                color: highlight
+                    ? const Color(0xFF64B5F6)
+                    : theme.textTheme.bodySmall?.color?.withOpacity(0.50),
+              ),
             ),
           ),
-        ),
-        Expanded(
-          child: Text(
-            value,
-            style: theme.textTheme.bodySmall?.copyWith(
-              height: 1.6,
-              color: theme.textTheme.bodySmall?.color?.withOpacity(0.75),
+          Expanded(
+            child: Text(
+              value,
+              style: theme.textTheme.bodySmall?.copyWith(
+                height: 1.6,
+                color: theme.textTheme.bodySmall?.color?.withOpacity(0.75),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
