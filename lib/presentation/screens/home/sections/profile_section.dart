@@ -157,8 +157,8 @@ class _SocialAndDownload extends ConsumerWidget {
         const Spacer(),
         OutlinedButton.icon(
           onPressed: () {
-            html.AnchorElement(href: 'assets/assets/docs/portfolio.pdf')
-              ..setAttribute('download', 'portfolio_parkhyunryeol.pdf')
+            html.AnchorElement(href: 'assets/assets/docs/resume.pdf')
+              ..setAttribute('download', 'resume_parkhyunryeol.pdf')
               ..click();
           },
           icon: const Icon(Icons.download, size: 18),

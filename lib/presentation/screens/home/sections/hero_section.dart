@@ -270,15 +270,15 @@ class _HeroContentState extends State<HeroContent> {
                 child: AnimatedTextKit(
                   animatedTexts: [
                     TypewriterAnimatedText(
-                      'A Creative iOS Developer',
+                      'Flutter & iOS Developer',
                       speed: const Duration(milliseconds: 90),
                     ),
                     TypewriterAnimatedText(
-                      'A Proactive Problem Solver',
+                      'End-to-End Mobile Engineer',
                       speed: const Duration(milliseconds: 90),
                     ),
                     TypewriterAnimatedText(
-                      'A Collaborative Team Player',
+                      'A Product-Minded Developer',
                       speed: const Duration(milliseconds: 90),
                     ),
                   ],
@@ -294,7 +294,7 @@ class _HeroContentState extends State<HeroContent> {
             child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: width * 0.6),
               child: Text(
-                '사용자 경험을 최우선으로 생각하며, 안정적이고 확장 가능한 솔루션을 만듭니다.',
+                '설계부터 스토어 출시까지, 제품의 모든 과정을 직접 만들어왔습니다.',
                 style: introStyle,
                 textAlign: TextAlign.center,
                 maxLines: 2,

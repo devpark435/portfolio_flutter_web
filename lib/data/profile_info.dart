@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../domain/models/profile_info.dart';
 
 const String profileBio =
-    'Flutter/iOS 개발자 박현렬입니다. UI/UX에 대한 높은 이해도를 바탕으로 사용자 중심의 매력적인 앱을 만드는 것을 좋아합니다. 새로운 기술을 배우고 동료와 지식을 공유하는 과정에서 즐거움을 느낍니다.';
+    'Flutter와 iOS를 넘나들며 서비스 전 과정을 주도해온 모바일 개발자입니다.\n스타트업에서 혼자 앱 전체를 담당하며 설계·개발·출시·운영을 경험했고, 오픈소스 패키지 배포와 App Store 50위 달성이라는 실질적인 결과를 만들었습니다. 좋은 구조와 좋은 사용자 경험, 둘 다 포기하지 않는 개발자입니다.';
 
 const List<ProfileInfo> profileDetails = [
   ProfileInfo(
