@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_web/config/providers/providers.dart';
 import 'package:portfolio_web/presentation/widgets/project_card.dart';
+import 'package:portfolio_web/presentation/widgets/scroll_reveal_widget.dart';
 import 'package:portfolio_web/presentation/widgets/section_title.dart';
 import 'package:portfolio_web/presentation/widgets/section_wrapper.dart';
-
 import '../../../widgets/contact_button.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
 class ProjectsSection extends ConsumerWidget {
   const ProjectsSection({super.key});
@@ -49,7 +48,7 @@ class ProjectsSection extends ConsumerWidget {
   }
 
   Widget _buildLoadingState(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 400,
       child: Center(
         child: Column(
@@ -83,35 +82,20 @@ class ProjectsSection extends ConsumerWidget {
   }
 
   Widget _buildErrorState(BuildContext context, String error) {
-    return Container(
+    return SizedBox(
       height: 200,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 48,
-              color: Theme.of(context).colorScheme.error,
-            ),
+            Icon(Icons.error_outline,
+                size: 48, color: Theme.of(context).colorScheme.error),
             const SizedBox(height: 16),
             Text(
               '프로젝트를 불러오는데 실패했습니다',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Theme.of(context).colorScheme.error,
                   ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              error,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.color
-                        ?.withOpacity(0.6),
-                  ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -123,29 +107,23 @@ class ProjectsSection extends ConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final availableWidth = constraints.maxWidth;
-
-        // 화면 너비별 카드 개수 및 너비 계산
         int itemsPerRow;
-        double cardWidth;
-
         if (availableWidth > 1200) {
-          itemsPerRow = 3; // 대형 화면: 3개 (카드가 커져서 3개로 조정)
+          itemsPerRow = 3;
         } else if (availableWidth > 800) {
-          itemsPerRow = 2; // 중간 화면: 2개
+          itemsPerRow = 2;
         } else {
-          itemsPerRow = 1; // 모바일: 1개
+          itemsPerRow = 1;
         }
-
-        // 간격을 고려한 카드 너비 계산
-        const spacing = 32.0; // 간격 증가
-        cardWidth =
+        const spacing = 32.0;
+        final cardWidth =
             (availableWidth - (spacing * (itemsPerRow - 1))) / itemsPerRow;
 
         return Column(
           children: [
-            // 프로젝트 개수 표시
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(20),
@@ -163,24 +141,19 @@ class ProjectsSection extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 32),
-            // 프로젝트 그리드
             Wrap(
               spacing: spacing,
-              runSpacing: 32, // 세로 간격 증가
+              runSpacing: 32,
               alignment: WrapAlignment.center,
-              children: projects
-                  .map((project) => SizedBox(
-                        width: cardWidth,
-                        child: ProjectCard(project: project),
-                      ))
-                  .toList()
-                  .animate(interval: 100.ms)
-                  .fadeIn(duration: 500.ms, delay: 200.ms)
-                  .moveY(
-                    begin: 30,
-                    duration: 500.ms,
-                    curve: Curves.easeOut,
+              children: projects.asMap().entries.map((entry) {
+                return SizedBox(
+                  width: cardWidth,
+                  child: ScrollRevealWidget(
+                    delay: Duration(milliseconds: entry.key * 80),
+                    child: ProjectCard(project: entry.value),
                   ),
+                );
+              }).toList(),
             ),
           ],
         );

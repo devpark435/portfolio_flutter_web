@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   static const Color primaryColorLight = Color(0xFF005A9C);
-  static const Color primaryColorDark = Color(0xFF53A9FF);
+  static const Color primaryColorDark = Color(0xFF54C5F8);
 
   static ThemeData get lightTheme {
     final baseTheme = ThemeData.light();
@@ -19,11 +19,9 @@ class AppTheme {
       colorScheme: const ColorScheme.light(
         primary: primaryColorLight,
         secondary: Color(0xFF007AFF),
-        background: Color(0xFFF5F5F7),
         surface: Colors.white,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
-        onBackground: Color(0xFF333333),
         onSurface: Color(0xFF333333),
         error: Colors.redAccent,
         onError: Colors.white,
@@ -36,8 +34,8 @@ class AppTheme {
     return baseTheme.copyWith(
       brightness: Brightness.dark,
       primaryColor: primaryColorDark,
-      scaffoldBackgroundColor: const Color(0xFF121212),
-      cardColor: const Color(0xFF1E1E1E),
+      scaffoldBackgroundColor: const Color(0xFF0D1117),
+      cardColor: const Color(0xFF161B22),
       textTheme: baseTheme.textTheme.apply(
         fontFamily: 'PretendardVariable',
         bodyColor: Colors.white.withOpacity(0.87),
@@ -45,15 +43,13 @@ class AppTheme {
       ),
       colorScheme: ColorScheme.dark(
         primary: primaryColorDark,
-        secondary: const Color(0xFF5EBCF6),
-        background: const Color(0xFF121212),
-        surface: Color(0xFF1E1E1E),
-        onPrimary: Color(0xFF1E1E1E),
-        onSecondary: Color(0xFF1E1E1E),
-        onBackground: Colors.white.withOpacity(0.87),
+        secondary: const Color(0xFF7E57C2),
+        surface: const Color(0xFF161B22),
+        onPrimary: const Color(0xFF0D1117),
+        onSecondary: const Color(0xFF0D1117),
         onSurface: Colors.white.withOpacity(0.87),
         error: Colors.red,
-        onError: const Color(0xFF1E1E1E),
+        onError: const Color(0xFF0D1117),
       ),
     );
   }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../data/skills.dart';
+import '../../../widgets/scroll_reveal_widget.dart';
 import '../../../widgets/section_title.dart';
 import '../../../widgets/section_wrapper.dart';
 import '../../../widgets/skill_card.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
 class SkillsSection extends ConsumerWidget {
   const SkillsSection({super.key});
@@ -31,41 +31,32 @@ class SkillsSection extends ConsumerWidget {
           LayoutBuilder(
             builder: (context, constraints) {
               final availableWidth = constraints.maxWidth;
-
-              // 화면 너비별 카드 개수 및 너비 계산
               int itemsPerRow;
-              double cardWidth;
-
               if (availableWidth > 1200) {
-                itemsPerRow = 3; // 대형 화면: 3개
+                itemsPerRow = 3;
               } else if (availableWidth > 800) {
-                itemsPerRow = 2; // 중간 화면: 2개
+                itemsPerRow = 2;
               } else {
-                itemsPerRow = 1; // 모바일: 1개
+                itemsPerRow = 1;
               }
-
-              // 간격을 고려한 카드 너비 계산
-              const spacing = 24.0; // Wrap의 spacing 값
-              cardWidth = (availableWidth - (spacing * (itemsPerRow - 1))) /
-                  itemsPerRow;
+              const spacing = 24.0;
+              final cardWidth =
+                  (availableWidth - (spacing * (itemsPerRow - 1))) /
+                      itemsPerRow;
 
               return Wrap(
-                spacing: spacing, // 가로 간격
-                runSpacing: 32, // 세로 간격 증가
+                spacing: spacing,
+                runSpacing: 32,
                 alignment: WrapAlignment.start,
-                children: skills
-                    .map((skill) => SizedBox(
-                          width: cardWidth,
-                          child: SkillCard(skill: skill),
-                        ))
-                    .toList()
-                    .animate(interval: 100.ms)
-                    .fadeIn(duration: 500.ms, delay: 200.ms)
-                    .moveY(
-                      begin: 30,
-                      duration: 500.ms,
-                      curve: Curves.easeOut,
+                children: skills.asMap().entries.map((entry) {
+                  return SizedBox(
+                    width: cardWidth,
+                    child: ScrollRevealWidget(
+                      delay: Duration(milliseconds: entry.key * 90),
+                      child: SkillCard(skill: entry.value),
                     ),
+                  );
+                }).toList(),
               );
             },
           ),

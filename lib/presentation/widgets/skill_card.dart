@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_web/config/providers/providers.dart';
@@ -18,6 +20,7 @@ class _SkillCardState extends ConsumerState<SkillCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final categoryColor = _getCategoryColor();
+    final isDark = theme.brightness == Brightness.dark;
 
     return MouseRegion(
       onEnter: (_) {
@@ -30,73 +33,118 @@ class _SkillCardState extends ConsumerState<SkillCard> {
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
         decoration: BoxDecoration(
-          color: theme.cardColor,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: _isHovered
-                ? categoryColor.withOpacity(0.5)
-                : theme.dividerColor.withOpacity(0.2),
+                ? categoryColor.withOpacity(0.55)
+                : Colors.white.withOpacity(isDark ? 0.07 : 0.3),
             width: 1,
           ),
-          gradient: _isHovered
-              ? RadialGradient(
-                  colors: [categoryColor.withOpacity(0.15), theme.cardColor],
-                  center: Alignment.center,
-                  radius: 0.8,
-                )
-              : null,
           boxShadow: _isHovered
               ? [
                   BoxShadow(
-                    color: categoryColor.withOpacity(0.1),
-                    blurRadius: 20,
-                    spreadRadius: 4,
+                    color: categoryColor.withOpacity(0.18),
+                    blurRadius: 24,
+                    spreadRadius: 2,
                   ),
                 ]
               : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withOpacity(isDark ? 0.3 : 0.06),
                     blurRadius: 10,
-                    offset: const Offset(0, 2),
+                    offset: const Offset(0, 3),
                   ),
                 ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(_getTitleIcon(), size: 36, color: categoryColor),
-            const SizedBox(height: 16),
-            Text(
-              widget.skill.title,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                color: categoryColor,
-                fontWeight: FontWeight.bold,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Stack(
+            children: [
+              // Glassmorphism background
+              Positioned.fill(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: _isHovered
+                          ? RadialGradient(
+                              colors: [
+                                categoryColor.withOpacity(isDark ? 0.12 : 0.08),
+                                isDark
+                                    ? Colors.white.withOpacity(0.03)
+                                    : Colors.white.withOpacity(0.6),
+                              ],
+                              center: Alignment.center,
+                              radius: 0.9,
+                            )
+                          : null,
+                      color: _isHovered
+                          ? null
+                          : isDark
+                              ? Colors.white.withOpacity(0.04)
+                              : Colors.white.withOpacity(0.65),
+                    ),
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              widget.skill.description,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
-                height: 1.5,
+              // Content
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(_getTitleIcon(), size: 36, color: categoryColor),
+                    const SizedBox(height: 16),
+                    Text(
+                      widget.skill.title,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        color: categoryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      widget.skill.description,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.textTheme.bodyMedium?.color
+                            ?.withOpacity(0.7),
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: widget.skill.skills.map((skillName) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: categoryColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                                color: categoryColor.withOpacity(0.2),
+                                width: 1),
+                          ),
+                          child: Text(
+                            skillName,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: categoryColor,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: widget.skill.skills.map((skillName) {
-                return Chip(
-                  label: Text(skillName),
-                  backgroundColor: categoryColor.withOpacity(0.1),
-                  side: BorderSide(color: categoryColor.withOpacity(0.2)),
-                );
-              }).toList(),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
