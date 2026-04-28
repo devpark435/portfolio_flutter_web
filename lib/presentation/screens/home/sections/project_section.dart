@@ -34,22 +34,25 @@ class _ProjectsSectionState extends ConsumerState<ProjectsSection> {
               child: Center(child: CircularProgressIndicator()),
             ),
             error: (e, _) => Center(child: Text('로드 실패: $e')),
-            data: (projects) => LayoutBuilder(
-              builder: (context, constraints) {
-                final isWide = constraints.maxWidth > 800;
-                return isWide
-                    ? _WideLayout(
-                        projects: projects,
-                        selectedIndex: _selectedIndex,
-                        onSelect: (i) => setState(() => _selectedIndex = i),
-                      )
-                    : _NarrowLayout(
-                        projects: projects,
-                        selectedIndex: _selectedIndex,
-                        onSelect: (i) => setState(() => _selectedIndex = i),
-                      );
-              },
-            ),
+            data: (projects) {
+              final reversed = projects.reversed.toList();
+              return LayoutBuilder(
+                builder: (context, constraints) {
+                  final isWide = constraints.maxWidth > 800;
+                  return isWide
+                      ? _WideLayout(
+                          projects: reversed,
+                          selectedIndex: _selectedIndex,
+                          onSelect: (i) => setState(() => _selectedIndex = i),
+                        )
+                      : _NarrowLayout(
+                          projects: reversed,
+                          selectedIndex: _selectedIndex,
+                          onSelect: (i) => setState(() => _selectedIndex = i),
+                        );
+                },
+              );
+            },
           ),
         ],
       ),
