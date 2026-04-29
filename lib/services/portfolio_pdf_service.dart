@@ -11,6 +11,7 @@ import '../data/experiences.dart';
 import '../data/profile_info.dart';
 import '../data/skills.dart';
 import '../domain/models/experience.dart';
+import '../domain/models/project.dart';
 import '../domain/repositories/project_repository.dart';
 
 class PortfolioPdfService {
@@ -39,6 +40,18 @@ class PortfolioPdfService {
     final font = pw.Font.ttf(fontData);
 
     final projects = await ProjectRepository().getProjects();
+    
+    final projectImages = <String, pw.ImageProvider>{};
+    for (final p in projects) {
+      if (p.imageUrl != null && p.imageUrl!.isNotEmpty) {
+        try {
+          final imageData = await rootBundle.load('assets/${p.imageUrl}');
+          projectImages[p.id] = pw.MemoryImage(imageData.buffer.asUint8List());
+        } catch (e) {
+          // Ignore image loading errors
+        }
+      }
+    }
 
     final pdf = pw.Document(
       theme: pw.ThemeData.withFont(base: font, bold: font),
@@ -63,8 +76,10 @@ class PortfolioPdfService {
           _section('PROJECTS', font, pw.SizedBox()),
           pw.SizedBox(height: 10),
           ...projects.take(5).expand((p) => [
-                _buildProject(p, font),
-                pw.SizedBox(height: 14),
+                _buildProject(p, font, projectImages[p.id]),
+                pw.SizedBox(height: 24),
+                pw.Divider(color: _border, thickness: 0.5),
+                pw.SizedBox(height: 24),
               ]),
         ],
       ),
@@ -363,139 +378,115 @@ class PortfolioPdfService {
     );
   }
 
-  // ── Project card ─────────────────────────────────────────────
-  static pw.Widget _buildProject(dynamic project, pw.Font font) {
-    return pw.Container(
-      padding: const pw.EdgeInsets.all(14),
-      decoration: pw.BoxDecoration(
-        border: pw.Border.all(color: _border),
-        borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
-      ),
-      child: pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          // Title + meta
-          pw.Row(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Expanded(
-                child: pw.Text(
-                  project.title,
-                  style: pw.TextStyle(font: font, fontSize: 11, color: _dark),
+  // ── Project card (Markdown Style) ────────────────────────────
+  static pw.Widget _buildProject(Project project, pw.Font font, pw.ImageProvider? image) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        // Title (Markdown ## Style)
+        pw.Text(
+          '# ${project.title}',
+          style: pw.TextStyle(font: font, fontSize: 14, color: _dark, fontWeight: pw.FontWeight.bold),
+        ),
+        pw.SizedBox(height: 6),
+        // Meta info
+        pw.Text(
+          '${project.period}  |  ${project.teamSize}',
+          style: pw.TextStyle(font: font, fontSize: 8.5, color: _muted),
+        ),
+        pw.SizedBox(height: 12),
+        
+        // Image
+        if (image != null) ...[
+          pw.Center(
+            child: pw.Container(
+              height: 200,
+              decoration: pw.BoxDecoration(
+                borderRadius: const pw.BorderRadius.all(pw.Radius.circular(6)),
+                image: pw.DecorationImage(
+                  image: image,
+                  fit: pw.BoxFit.contain,
                 ),
               ),
-              pw.Text(
-                '${project.period}  |  ${project.teamSize}',
-                style: pw.TextStyle(font: font, fontSize: 7.5, color: _muted),
-              ),
-            ],
-          ),
-          pw.SizedBox(height: 4),
-          pw.Text(
-            project.summary,
-            style:
-                pw.TextStyle(font: font, fontSize: 8.5, color: _muted, lineSpacing: 1.5),
-          ),
-          pw.SizedBox(height: 8),
-          // Tech stack pills
-          pw.Wrap(
-            spacing: 4,
-            runSpacing: 3,
-            children: (project.technologies as List<String>)
-                .map(
-                  (t) => pw.Container(
-                    padding: const pw.EdgeInsets.symmetric(
-                        horizontal: 6, vertical: 2),
-                    decoration: pw.BoxDecoration(
-                      color: _tagBg,
-                      borderRadius:
-                          const pw.BorderRadius.all(pw.Radius.circular(3)),
-                      border: pw.Border.all(color: PdfColor.fromHex('BFDBFE')),
-                    ),
-                    child: pw.Text(t,
-                        style: pw.TextStyle(
-                            font: font, fontSize: 7.5, color: _accent)),
-                  ),
-                )
-                .toList(),
-          ),
-          pw.SizedBox(height: 10),
-          // Responsibilities
-          pw.Text('담당 업무',
-              style: pw.TextStyle(font: font, fontSize: 8.5, color: _dark)),
-          pw.SizedBox(height: 4),
-          ...(project.responsibilities as List<String>).map(
-            (r) => pw.Padding(
-              padding: const pw.EdgeInsets.only(bottom: 2),
-              child: pw.Row(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.Text('• ',
-                      style: pw.TextStyle(
-                          font: font, fontSize: 8, color: _muted)),
-                  pw.Expanded(
-                    child: pw.Text(r,
-                        style: pw.TextStyle(
-                            font: font, fontSize: 8.5, color: _body,
-                            lineSpacing: 1.5)),
-                  ),
-                ],
-              ),
             ),
           ),
-          // Troubleshooting highlight (1건)
-          if ((project.troubleshooting as List).isNotEmpty) ...[
-            pw.SizedBox(height: 8),
-            pw.Container(
-              padding: const pw.EdgeInsets.all(10),
-              decoration: pw.BoxDecoration(
-                color: _sectionBg,
-                borderRadius:
-                    const pw.BorderRadius.all(pw.Radius.circular(5)),
-                border: pw.Border.all(color: _border),
-              ),
-              child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.Row(
-                    children: [
-                      pw.Container(
-                        padding: const pw.EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: pw.BoxDecoration(
-                          color: PdfColor.fromHex('DBEAFE'),
-                          borderRadius:
-                              const pw.BorderRadius.all(pw.Radius.circular(3)),
-                        ),
-                        child: pw.Text('문제 해결',
-                            style: pw.TextStyle(
-                                font: font, fontSize: 7.5, color: _accent)),
-                      ),
-                      pw.SizedBox(width: 8),
-                      pw.Expanded(
-                        child: pw.Text(
-                          project.troubleshooting[0].issue,
-                          style: pw.TextStyle(
-                              font: font, fontSize: 8.5, color: _dark),
-                        ),
-                      ),
-                    ],
-                  ),
-                  pw.SizedBox(height: 5),
-                  pw.Text(
-                    project.troubleshooting[0].solution,
-                    style: pw.TextStyle(
-                        font: font,
-                        fontSize: 8,
-                        color: _body,
-                        lineSpacing: 2),
-                  ),
-                ],
-              ),
-            ),
-          ],
+          pw.SizedBox(height: 14),
         ],
-      ),
+
+        // Summary / Description
+        pw.Text(
+          project.summary,
+          style: pw.TextStyle(font: font, fontSize: 10, color: _dark, lineSpacing: 1.5, fontWeight: pw.FontWeight.bold),
+        ),
+        pw.SizedBox(height: 6),
+        pw.Text(
+          project.description,
+          style: pw.TextStyle(font: font, fontSize: 9.5, color: _body, lineSpacing: 1.5),
+        ),
+        pw.SizedBox(height: 14),
+
+        // Tech Stack
+        pw.Text('## Tech Stack', style: pw.TextStyle(font: font, fontSize: 11, color: _dark, fontWeight: pw.FontWeight.bold)),
+        pw.SizedBox(height: 6),
+        pw.Wrap(
+          spacing: 6,
+          runSpacing: 4,
+          children: project.technologies
+              .map(
+                (t) => pw.Text('`$t`', style: pw.TextStyle(font: font, fontSize: 9, color: _accent)),
+              )
+              .toList(),
+        ),
+        pw.SizedBox(height: 14),
+
+        // Responsibilities
+        pw.Text('## Responsibilities', style: pw.TextStyle(font: font, fontSize: 11, color: _dark, fontWeight: pw.FontWeight.bold)),
+        pw.SizedBox(height: 6),
+        ...project.responsibilities.map(
+          (r) => pw.Padding(
+            padding: const pw.EdgeInsets.only(bottom: 4),
+            child: pw.Row(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text('- ', style: pw.TextStyle(font: font, fontSize: 9.5, color: _muted)),
+                pw.Expanded(
+                  child: pw.Text(r, style: pw.TextStyle(font: font, fontSize: 9.5, color: _body, lineSpacing: 1.5)),
+                ),
+              ],
+            ),
+          ),
+        ),
+        
+        // Troubleshooting
+        if (project.troubleshooting.isNotEmpty) ...[
+          pw.SizedBox(height: 14),
+          pw.Text('## Troubleshooting', style: pw.TextStyle(font: font, fontSize: 11, color: _dark, fontWeight: pw.FontWeight.bold)),
+          pw.SizedBox(height: 6),
+          ...project.troubleshooting.take(2).map((t) => pw.Padding(
+            padding: const pw.EdgeInsets.only(bottom: 10),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Row(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text('Issue: ', style: pw.TextStyle(font: font, fontSize: 9.5, color: _dark, fontWeight: pw.FontWeight.bold)),
+                    pw.Expanded(child: pw.Text(t.issue, style: pw.TextStyle(font: font, fontSize: 9.5, color: _dark, fontWeight: pw.FontWeight.bold))),
+                  ]
+                ),
+                pw.SizedBox(height: 4),
+                pw.Row(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text('Solution: ', style: pw.TextStyle(font: font, fontSize: 9.5, color: _body, fontWeight: pw.FontWeight.bold)),
+                    pw.Expanded(child: pw.Text(t.solution, style: pw.TextStyle(font: font, fontSize: 9.5, color: _body, lineSpacing: 1.5))),
+                  ]
+                ),
+              ],
+            ),
+          )),
+        ],
+      ],
     );
   }
 }
