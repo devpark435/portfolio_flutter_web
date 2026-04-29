@@ -15,14 +15,11 @@ import '../domain/models/project.dart';
 import '../domain/repositories/project_repository.dart';
 
 class PortfolioPdfService {
-  // ── Colors ───────────────────────────────────────────────────
-  static final _accent = PdfColor.fromHex('2563EB');
-  static final _dark = PdfColor.fromHex('0F172A');
-  static final _body = PdfColor.fromHex('334155');
-  static final _muted = PdfColor.fromHex('64748B');
-  static final _border = PdfColor.fromHex('E2E8F0');
-  static final _tagBg = PdfColor.fromHex('EFF6FF');
-  static final _sectionBg = PdfColor.fromHex('F8FAFC');
+  // ── Colors (Clean Minimalist) ──────────────────────────────
+  static final _dark = PdfColor.fromHex('000000');
+  static final _body = PdfColor.fromHex('111111');
+  static final _muted = PdfColor.fromHex('555555');
+  static final _border = PdfColor.fromHex('EEEEEE');
 
   static Future<void> download() async {
     final bytes = await _generate();
@@ -39,19 +36,19 @@ class PortfolioPdfService {
         await rootBundle.load('assets/fonts/PretendardVariable.ttf');
     final font = pw.Font.ttf(fontData);
 
-    final projects = await ProjectRepository().getProjects();
-    
-    final projectImages = <String, pw.ImageProvider>{};
-    for (final p in projects) {
-      if (p.imageUrl != null && p.imageUrl!.isNotEmpty) {
-        try {
-          final imageData = await rootBundle.load('assets/${p.imageUrl}');
-          projectImages[p.id] = pw.MemoryImage(imageData.buffer.asUint8List());
-        } catch (e) {
-          // Ignore image loading errors
-        }
-      }
-    }
+    // Profile Image
+    pw.ImageProvider? profileImage;
+    try {
+      final profileData = await rootBundle.load('assets/images/profile.jpg');
+      profileImage = pw.MemoryImage(profileData.buffer.asUint8List());
+    } catch (e) {}
+
+    final allProjects = await ProjectRepository().getProjects();
+    // Key Projects: Swipe Gallery (1), Reactive Mind Map (2), DeepGuard AI (9), Pinlog (11)
+    final keyProjectIds = ['1', '2', '9', '11'];
+    final projects = allProjects.where((p) => keyProjectIds.contains(p.id)).toList();
+    // Sort projects in the order of keyProjectIds
+    projects.sort((a, b) => keyProjectIds.indexOf(a.id).compareTo(keyProjectIds.indexOf(b.id)));
 
     final pdf = pw.Document(
       theme: pw.ThemeData.withFont(base: font, bold: font),
@@ -60,27 +57,37 @@ class PortfolioPdfService {
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
-        margin: const pw.EdgeInsets.symmetric(horizontal: 48, vertical: 40),
+        margin: const pw.EdgeInsets.all(45),
         footer: (ctx) => _footer(font, ctx),
         build: (ctx) => [
-          _buildHeader(font),
-          pw.SizedBox(height: 16),
-          _buildBio(font),
-          pw.SizedBox(height: 18),
-          _section('SKILLS', font, _buildSkills(font)),
-          pw.SizedBox(height: 16),
-          _section('EXPERIENCE', font, _buildExperience(font)),
-          pw.SizedBox(height: 16),
-          _section('AWARDS', font, _buildAwards(font)),
-          pw.NewPage(),
-          _section('PROJECTS', font, pw.SizedBox()),
-          pw.SizedBox(height: 10),
-          ...projects.take(5).expand((p) => [
-                _buildProject(p, font, projectImages[p.id]),
-                pw.SizedBox(height: 24),
-                pw.Divider(color: _border, thickness: 0.5),
-                pw.SizedBox(height: 24),
-              ]),
+          _buildHeader(font, profileImage),
+          pw.SizedBox(height: 25),
+          
+          ..._buildSection(title: 'ABOUT', font: font, children: [
+            _buildBio(font),
+          ]),
+          pw.SizedBox(height: 20),
+          
+          ..._buildSection(title: 'SKILLS', font: font, children: _buildSkills(font)),
+          pw.SizedBox(height: 20),
+          
+          ..._buildSection(title: 'EXPERIENCE', font: font, children: _buildExperience(font)),
+          pw.SizedBox(height: 20),
+          
+          ..._buildSection(title: 'AWARDS', font: font, children: _buildAwards(font)),
+          pw.SizedBox(height: 25),
+          
+          ..._buildSection(title: 'KEY PROJECTS', font: font, children: [
+             pw.SizedBox(height: 10),
+             ...projects.asMap().entries.expand((entry) {
+                final p = entry.value;
+                final isLast = entry.key == projects.length - 1;
+                return [
+                  _buildProject(p, font),
+                  if (!isLast) pw.SizedBox(height: 35),
+                ];
+              }),
+          ]),
         ],
       ),
     );
@@ -88,400 +95,195 @@ class PortfolioPdfService {
     return pdf.save();
   }
 
-  // ── Footer ───────────────────────────────────────────────────
   static pw.Widget _footer(pw.Font font, pw.Context ctx) {
+    return pw.Container(
+      alignment: pw.Alignment.centerRight,
+      padding: const pw.EdgeInsets.only(top: 10),
+      child: pw.Text(
+        '${ctx.pageNumber} / ${ctx.pagesCount}',
+        style: pw.TextStyle(font: font, fontSize: 8, color: _muted),
+      ),
+    );
+  }
+
+  static pw.Widget _buildHeader(pw.Font font, pw.ImageProvider? profileImage) {
     return pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: pw.CrossAxisAlignment.center,
       children: [
-        pw.Text(
-          'devpark435.github.io/portfolio_flutter_web',
-          style: pw.TextStyle(font: font, fontSize: 7.5, color: _muted),
-        ),
-        pw.Text(
-          '${ctx.pageNumber} / ${ctx.pagesCount}',
-          style: pw.TextStyle(font: font, fontSize: 7.5, color: _muted),
+        if (profileImage != null)
+          pw.Container(
+            width: 70,
+            height: 70,
+            margin: const pw.EdgeInsets.only(right: 20),
+            child: pw.ClipOval(
+              child: pw.Image(profileImage, fit: pw.BoxFit.cover),
+            ),
+          ),
+        pw.Expanded(
+          child: pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text(
+                '박현렬',
+                style: pw.TextStyle(font: font, fontSize: 28, color: _dark, fontWeight: pw.FontWeight.bold),
+              ),
+              pw.SizedBox(height: 2),
+              pw.Text(
+                'Flutter & iOS Developer',
+                style: pw.TextStyle(font: font, fontSize: 12, color: _muted),
+              ),
+              pw.SizedBox(height: 10),
+              pw.Row(
+                children: [
+                  pw.Text('devpark435@gmail.com', style: pw.TextStyle(font: font, fontSize: 8.5, color: _body)),
+                  pw.SizedBox(width: 12),
+                  pw.Text('github.com/devpark435', style: pw.TextStyle(font: font, fontSize: 8.5, color: _body)),
+                ],
+              ),
+            ],
+          ),
         ),
       ],
     );
   }
 
-  // ── Header ───────────────────────────────────────────────────
-  static pw.Widget _buildHeader(pw.Font font) {
-    return pw.Container(
-      padding: const pw.EdgeInsets.all(22),
-      decoration: pw.BoxDecoration(
-        color: _dark,
-        borderRadius: const pw.BorderRadius.all(pw.Radius.circular(10)),
+  static pw.Widget _buildBio(pw.Font font) {
+    return pw.Text(
+      profileBio.replaceAll('\n', ' '),
+      style: pw.TextStyle(font: font, fontSize: 9.5, color: _body, lineSpacing: 3),
+    );
+  }
+
+  static List<pw.Widget> _buildSection({required String title, required pw.Font font, required List<pw.Widget> children}) {
+    return [
+      pw.Text(
+        title,
+        style: pw.TextStyle(font: font, fontSize: 10, color: _dark, fontWeight: pw.FontWeight.bold, letterSpacing: 1),
       ),
+      pw.SizedBox(height: 4),
+      pw.Divider(color: _dark, thickness: 1),
+      pw.SizedBox(height: 8),
+      ...children,
+    ];
+  }
+
+  static List<pw.Widget> _buildSkills(pw.Font font) {
+    return skills.map((skill) {
+      return pw.Padding(
+        padding: const pw.EdgeInsets.only(bottom: 6),
+        child: pw.Row(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.SizedBox(
+              width: 100,
+              child: pw.Text(
+                skill.title,
+                style: pw.TextStyle(font: font, fontSize: 9, color: _dark, fontWeight: pw.FontWeight.bold),
+              ),
+            ),
+            pw.Expanded(
+              child: pw.Text(
+                skill.skills.join(', '),
+                style: pw.TextStyle(font: font, fontSize: 9, color: _body),
+              ),
+            ),
+          ],
+        ),
+      );
+    }).toList();
+  }
+
+  static List<pw.Widget> _buildExperience(pw.Font font) {
+    final sorted = [...experiences]..sort((a, b) => b.period.compareTo(a.period));
+    return sorted.map((e) => pw.Padding(
+      padding: const pw.EdgeInsets.only(bottom: 12),
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
           pw.Row(
-            crossAxisAlignment: pw.CrossAxisAlignment.end,
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
-              pw.Text(
-                '박현렬',
-                style: pw.TextStyle(font: font, fontSize: 26, color: PdfColors.white),
-              ),
-              pw.SizedBox(width: 12),
-              pw.Padding(
-                padding: const pw.EdgeInsets.only(bottom: 3),
-                child: pw.Text(
-                  'Flutter & iOS Developer',
-                  style: pw.TextStyle(font: font, fontSize: 12, color: _accent),
-                ),
-              ),
+              pw.Text('${e.title} - ${e.role}', style: pw.TextStyle(font: font, fontSize: 9.5, fontWeight: pw.FontWeight.bold)),
+              pw.Text(e.period, style: pw.TextStyle(font: font, fontSize: 8.5, color: _muted)),
             ],
           ),
-          pw.SizedBox(height: 12),
-          pw.Row(
-            children: [
-              _contactChip(font, 'devpark435@gmail.com'),
-              pw.SizedBox(width: 12),
-              _contactChip(font, 'github.com/devpark435'),
-              pw.SizedBox(width: 12),
-              _contactChip(font, '포트폴리오 사이트'),
-            ],
-          ),
+          pw.SizedBox(height: 3),
+          ...e.description.map((d) => pw.Padding(
+            padding: const pw.EdgeInsets.only(left: 8, bottom: 1),
+            child: pw.Row(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text('• ', style: pw.TextStyle(font: font, fontSize: 8.5)),
+                pw.Expanded(child: pw.Text(d, style: pw.TextStyle(font: font, fontSize: 8.5, color: _body, lineSpacing: 1.5))),
+              ],
+            ),
+          )),
         ],
       ),
-    );
+    )).toList();
   }
 
-  static pw.Widget _contactChip(pw.Font font, String text) {
-    return pw.Container(
-      padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: pw.BoxDecoration(
-        color: PdfColor.fromHex('1E3A6E'),
-        borderRadius: const pw.BorderRadius.all(pw.Radius.circular(4)),
+  static List<pw.Widget> _buildAwards(pw.Font font) {
+    return awards.map((a) => pw.Padding(
+      padding: const pw.EdgeInsets.only(bottom: 4),
+      child: pw.Row(
+        children: [
+          pw.Text(a.award, style: pw.TextStyle(font: font, fontSize: 9, fontWeight: pw.FontWeight.bold)),
+          pw.SizedBox(width: 8),
+          pw.Text(a.title, style: pw.TextStyle(font: font, fontSize: 9)),
+          pw.Spacer(),
+          pw.Text(a.date, style: pw.TextStyle(font: font, fontSize: 8.5, color: _muted)),
+        ],
       ),
-      child: pw.Text(
-        text,
-        style: pw.TextStyle(font: font, fontSize: 8, color: PdfColor.fromHex('FFFFFFAA')),
-      ),
-    );
+    )).toList();
   }
 
-  // ── Bio ──────────────────────────────────────────────────────
-  static pw.Widget _buildBio(pw.Font font) {
-    return pw.Container(
-      padding: const pw.EdgeInsets.fromLTRB(14, 12, 14, 12),
-      decoration: pw.BoxDecoration(
-        border: pw.Border(left: pw.BorderSide(color: _accent, width: 3)),
-        color: _sectionBg,
-      ),
-      child: pw.Text(
-        profileBio.replaceAll('\n', ' '),
-        style: pw.TextStyle(font: font, fontSize: 9.5, color: _body, lineSpacing: 3),
-      ),
-    );
-  }
-
-  // ── Section wrapper ──────────────────────────────────────────
-  static pw.Widget _section(String title, pw.Font font, pw.Widget content) {
+  static pw.Widget _buildProject(Project project, pw.Font font) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: pw.CrossAxisAlignment.end,
           children: [
-            pw.Text(
-              title,
-              style: pw.TextStyle(
-                font: font,
-                fontSize: 8.5,
-                color: _accent,
-                letterSpacing: 1.8,
-              ),
-            ),
-            pw.SizedBox(width: 10),
-            pw.Expanded(child: pw.Divider(color: _border, thickness: 0.7)),
+            pw.Text(project.title, style: pw.TextStyle(font: font, fontSize: 12.5, fontWeight: pw.FontWeight.bold, color: _dark)),
+            pw.Text('${project.period}  |  ${project.teamSize}', style: pw.TextStyle(font: font, fontSize: 8.5, color: _muted)),
           ],
         ),
+        pw.SizedBox(height: 6),
+        pw.Text(project.summary, style: pw.TextStyle(font: font, fontSize: 9.5, fontWeight: pw.FontWeight.bold)),
+        pw.SizedBox(height: 3),
+        pw.Text(project.description, style: pw.TextStyle(font: font, fontSize: 9, color: _body, lineSpacing: 1.8)),
         pw.SizedBox(height: 10),
-        content,
-      ],
-    );
-  }
-
-  // ── Skills ───────────────────────────────────────────────────
-  static pw.Widget _buildSkills(pw.Font font) {
-    return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: skills.map((skill) {
-        return pw.Padding(
-          padding: const pw.EdgeInsets.only(bottom: 7),
+        
+        pw.Text('Technologies: ${project.technologies.join(", ")}', style: pw.TextStyle(font: font, fontSize: 8.5, color: _muted)),
+        pw.SizedBox(height: 10),
+        
+        pw.Text('Key Responsibilities', style: pw.TextStyle(font: font, fontSize: 9, fontWeight: pw.FontWeight.bold)),
+        pw.SizedBox(height: 3),
+        ...project.responsibilities.map((r) => pw.Padding(
+          padding: const pw.EdgeInsets.only(left: 8, bottom: 1),
           child: pw.Row(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              pw.SizedBox(
-                width: 88,
-                child: pw.Text(
-                  skill.title,
-                  style: pw.TextStyle(font: font, fontSize: 8.5, color: _muted),
-                ),
-              ),
-              pw.Expanded(
-                child: pw.Wrap(
-                  spacing: 4,
-                  runSpacing: 4,
-                  children: skill.skills
-                      .map((s) => pw.Container(
-                            padding: const pw.EdgeInsets.symmetric(
-                                horizontal: 7, vertical: 2),
-                            decoration: pw.BoxDecoration(
-                              color: _tagBg,
-                              borderRadius:
-                                  const pw.BorderRadius.all(pw.Radius.circular(4)),
-                              border: pw.Border.all(
-                                color: PdfColor.fromHex('BFDBFE'),
-                              ),
-                            ),
-                            child: pw.Text(
-                              s,
-                              style: pw.TextStyle(
-                                  font: font, fontSize: 8, color: _accent),
-                            ),
-                          ))
-                      .toList(),
-                ),
-              ),
+              pw.Text('- ', style: pw.TextStyle(font: font, fontSize: 8.5)),
+              pw.Expanded(child: pw.Text(r, style: pw.TextStyle(font: font, fontSize: 8.5, lineSpacing: 1.5))),
             ],
           ),
-        );
-      }).toList(),
-    );
-  }
-
-  // ── Experience ───────────────────────────────────────────────
-  static pw.Widget _buildExperience(pw.Font font) {
-    final work = experiences
-        .where((e) => e.type == 'work' || e.type == 'freelance')
-        .toList();
-    final activity =
-        experiences.where((e) => e.type == 'activity').toList();
-
-    return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        ...work.map((e) => _expItem(e, font, isWork: true)),
-        if (work.isNotEmpty && activity.isNotEmpty) pw.SizedBox(height: 6),
-        ...activity.map((e) => _expItem(e, font, isWork: false)),
-      ],
-    );
-  }
-
-  static pw.Widget _expItem(Experience exp, pw.Font font,
-      {required bool isWork}) {
-    return pw.Padding(
-      padding: const pw.EdgeInsets.only(bottom: 10),
-      child: pw.Row(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Container(
-            width: 5,
-            height: 5,
-            margin: const pw.EdgeInsets.only(top: 3, right: 10),
-            decoration: pw.BoxDecoration(
-              color: isWork ? _accent : _muted,
-              shape: pw.BoxShape.circle,
-            ),
-          ),
-          pw.Expanded(
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Row(
-                  children: [
-                    pw.Text(
-                      exp.title,
-                      style: pw.TextStyle(
-                          font: font, fontSize: 9.5, color: _dark),
-                    ),
-                    pw.SizedBox(width: 6),
-                    pw.Text(
-                      '· ${exp.role}',
-                      style:
-                          pw.TextStyle(font: font, fontSize: 8.5, color: _muted),
-                    ),
-                    pw.Spacer(),
-                    pw.Text(
-                      exp.period,
-                      style:
-                          pw.TextStyle(font: font, fontSize: 7.5, color: _muted),
-                    ),
-                  ],
-                ),
-                pw.SizedBox(height: 4),
-                ...exp.description.map(
-                  (d) => pw.Padding(
-                    padding: const pw.EdgeInsets.only(bottom: 2),
-                    child: pw.Row(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text('• ',
-                            style: pw.TextStyle(
-                                font: font, fontSize: 8, color: _muted)),
-                        pw.Expanded(
-                          child: pw.Text(
-                            d,
-                            style: pw.TextStyle(
-                                font: font, fontSize: 8.5, color: _body,
-                                lineSpacing: 1.5),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ── Awards ───────────────────────────────────────────────────
-  static pw.Widget _buildAwards(pw.Font font) {
-    return pw.Row(
-      children: awards
-          .map(
-            (a) => pw.Expanded(
-              child: pw.Container(
-                margin: const pw.EdgeInsets.only(right: 6),
-                padding: const pw.EdgeInsets.all(10),
-                decoration: pw.BoxDecoration(
-                  border: pw.Border.all(color: _border),
-                  borderRadius:
-                      const pw.BorderRadius.all(pw.Radius.circular(6)),
-                ),
-                child: pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text(a.award,
-                        style: pw.TextStyle(
-                            font: font, fontSize: 9.5, color: _accent)),
-                    pw.SizedBox(height: 3),
-                    pw.Text(a.title,
-                        style: pw.TextStyle(
-                            font: font, fontSize: 7.5, color: _dark)),
-                    pw.SizedBox(height: 2),
-                    pw.Text(a.date,
-                        style: pw.TextStyle(
-                            font: font, fontSize: 7, color: _muted)),
-                  ],
-                ),
-              ),
-            ),
-          )
-          .toList(),
-    );
-  }
-
-  // ── Project card (Markdown Style) ────────────────────────────
-  static pw.Widget _buildProject(Project project, pw.Font font, pw.ImageProvider? image) {
-    return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        // Title (Markdown ## Style)
-        pw.Text(
-          '# ${project.title}',
-          style: pw.TextStyle(font: font, fontSize: 14, color: _dark, fontWeight: pw.FontWeight.bold),
-        ),
-        pw.SizedBox(height: 6),
-        // Meta info
-        pw.Text(
-          '${project.period}  |  ${project.teamSize}',
-          style: pw.TextStyle(font: font, fontSize: 8.5, color: _muted),
-        ),
-        pw.SizedBox(height: 12),
+        )),
         
-        // Image
-        if (image != null) ...[
-          pw.Center(
-            child: pw.Container(
-              height: 200,
-              decoration: pw.BoxDecoration(
-                borderRadius: const pw.BorderRadius.all(pw.Radius.circular(6)),
-                image: pw.DecorationImage(
-                  image: image,
-                  fit: pw.BoxFit.contain,
-                ),
-              ),
-            ),
-          ),
-          pw.SizedBox(height: 14),
-        ],
-
-        // Summary / Description
-        pw.Text(
-          project.summary,
-          style: pw.TextStyle(font: font, fontSize: 10, color: _dark, lineSpacing: 1.5, fontWeight: pw.FontWeight.bold),
-        ),
-        pw.SizedBox(height: 6),
-        pw.Text(
-          project.description,
-          style: pw.TextStyle(font: font, fontSize: 9.5, color: _body, lineSpacing: 1.5),
-        ),
-        pw.SizedBox(height: 14),
-
-        // Tech Stack
-        pw.Text('## Tech Stack', style: pw.TextStyle(font: font, fontSize: 11, color: _dark, fontWeight: pw.FontWeight.bold)),
-        pw.SizedBox(height: 6),
-        pw.Wrap(
-          spacing: 6,
-          runSpacing: 4,
-          children: project.technologies
-              .map(
-                (t) => pw.Text('`$t`', style: pw.TextStyle(font: font, fontSize: 9, color: _accent)),
-              )
-              .toList(),
-        ),
-        pw.SizedBox(height: 14),
-
-        // Responsibilities
-        pw.Text('## Responsibilities', style: pw.TextStyle(font: font, fontSize: 11, color: _dark, fontWeight: pw.FontWeight.bold)),
-        pw.SizedBox(height: 6),
-        ...project.responsibilities.map(
-          (r) => pw.Padding(
-            padding: const pw.EdgeInsets.only(bottom: 4),
-            child: pw.Row(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text('- ', style: pw.TextStyle(font: font, fontSize: 9.5, color: _muted)),
-                pw.Expanded(
-                  child: pw.Text(r, style: pw.TextStyle(font: font, fontSize: 9.5, color: _body, lineSpacing: 1.5)),
-                ),
-              ],
-            ),
-          ),
-        ),
-        
-        // Troubleshooting
         if (project.troubleshooting.isNotEmpty) ...[
-          pw.SizedBox(height: 14),
-          pw.Text('## Troubleshooting', style: pw.TextStyle(font: font, fontSize: 11, color: _dark, fontWeight: pw.FontWeight.bold)),
-          pw.SizedBox(height: 6),
+          pw.SizedBox(height: 10),
+          pw.Text('Troubleshooting', style: pw.TextStyle(font: font, fontSize: 9, fontWeight: pw.FontWeight.bold)),
+          pw.SizedBox(height: 3),
           ...project.troubleshooting.take(2).map((t) => pw.Padding(
-            padding: const pw.EdgeInsets.only(bottom: 10),
+            padding: const pw.EdgeInsets.only(left: 8, bottom: 6),
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Row(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text('Issue: ', style: pw.TextStyle(font: font, fontSize: 9.5, color: _dark, fontWeight: pw.FontWeight.bold)),
-                    pw.Expanded(child: pw.Text(t.issue, style: pw.TextStyle(font: font, fontSize: 9.5, color: _dark, fontWeight: pw.FontWeight.bold))),
-                  ]
-                ),
-                pw.SizedBox(height: 4),
-                pw.Row(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text('Solution: ', style: pw.TextStyle(font: font, fontSize: 9.5, color: _body, fontWeight: pw.FontWeight.bold)),
-                    pw.Expanded(child: pw.Text(t.solution, style: pw.TextStyle(font: font, fontSize: 9.5, color: _body, lineSpacing: 1.5))),
-                  ]
-                ),
+                pw.Text('• Issue: ${t.issue}', style: pw.TextStyle(font: font, fontSize: 8.5, color: _dark)),
+                pw.SizedBox(height: 1),
+                pw.Text('• Solution: ${t.solution}', style: pw.TextStyle(font: font, fontSize: 8.5, color: _muted, lineSpacing: 1.5)),
               ],
             ),
           )),
@@ -490,3 +292,5 @@ class PortfolioPdfService {
     );
   }
 }
+
+
